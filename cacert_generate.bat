@@ -24,6 +24,14 @@ if exist "%XVHM_TMP_DIR%" del /Q "%XVHM_TMP_DIR%\."
 if not exist "%XVHM_TMP_DIR%" mkdir "%XVHM_TMP_DIR%"
 if not exist "%XVHM_CACERT_DIR%" mkdir "%XVHM_CACERT_DIR%"
 
+if exist "%XVHM_CACERT_DIR%\cacert.crt" (
+    if exist "%XVHM_CACERT_DIR%\cacert.name" (
+        for /F "tokens=* USEBACKQ" %%v in ("%XVHM_CACERT_DIR%\cacert.name") do (
+            if "%XVHM_OPENSSL_SUBJECT_CN%"=="%%v" goto installCert
+        )
+    )
+)
+
 echo.
 echo ========================================
 echo Start generate new CA certificate bundle
@@ -63,6 +71,7 @@ set keyFile=
 set nameFile=
 del /Q "%XVHM_TMP_DIR%\."
 
+:installCert
 echo.
 echo ========================================
 echo Installing the CA certificate

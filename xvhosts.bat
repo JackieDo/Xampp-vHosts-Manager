@@ -81,21 +81,18 @@ goto startCommand
 echo.
 echo Cannot find PHP cli.
 echo Make sure you have set the path to your PHP directory in system environment variables.
-echo.
 goto endCommand
 
 :xamppDirNotFound
 echo.
 echo Cannot find Xampp directory.
 echo Please check the configuration path to the Xampp directory in file "settings.ini".
-echo.
 goto endCommand
 
 :apacheDirNotFound
 echo.
 echo Cannot find Apache directory.
 echo Please check the configuration path to the Apache directory in file "settings.ini".
-echo.
 goto endCommand
 
 :missingArgs
@@ -109,7 +106,6 @@ goto endCommand
 echo.
 echo Xampp vHosts Manager has not been integrated into Xampp.
 echo Run command "xvhosts install" in Administartor mode to integrate it.
-echo.
 goto endCommand
 
 :: INSTALL APP ==================================
