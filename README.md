@@ -5,11 +5,11 @@ Virtual hosts (SSL) management system (in console mode) for Xampp on Windows OS
 
 Someone once asked me
 
-> **How to configure and manage Virtual Hosts for Xampp on Windows OS?**
+> ***How to configure and manage Virtual Hosts for Xampp on Windows OS?***
 
 A few others asked
 
-> **How do I add self-signed SSL certificates to Xampp Virtual Hosts as quickly as possible and easily manage them without the hassle of using OPENSSL commands?**
+> ***How do I add self-signed SSL certificates to Xampp Virtual Hosts as quickly as possible and easily manage them without the hassle of using OPENSSL commands?***
 
 Therefore, this project was born, in order to strengthen Xampp, helping users take advantage of Xampp's inherent resources to make the above purposes as quickly and easily as possible.
 
@@ -65,7 +65,7 @@ Xampp vHosts Manager takes full advantage of what's included in Xampp, nothing m
 > Note: See [here](https://www.howtogeek.com/194041/how-to-open-the-command-prompt-as-administrator-in-windows-8.1/) to know how to to open the command prompt as Administrator.
 
 ## Usage
-Because of a path to the Xampp vHosts Manager application directory has been added to the system environment variables during the installation process, now you can just open the terminal (no need to open in Administrator mode anymore) anywhere and excute one of the following `xvhosts` commands:
+Because of a path to the Xampp vHosts Manager application directory has been added to the system environment variables during the installation process, now you can just open the terminal `(no need to open in Administrator mode anymore)` anywhere and excute one of the following `xvhosts` commands:
 
 #### Display the help message
 
