@@ -58,14 +58,14 @@ Xampp vHosts Manager takes full advantage of what's included in Xampp, nothing m
 * Download the [latest release](https://github.com/JackieDo/Xampp-vHosts-Manager/releases/latest)
 * Extract the archive to a shared location `(example: D:\vhostsManager)`. Note: Should not place in `C:\Program Files` or anywhere else that would require Administrator access for modifying configuration files.
 * Open a terminal in Administrator mode `(run as Administrator)`.
-* Navigate to the directory you have placed Xampp vHosts Manager `(following the example above is D:\vhostsManager)`.
+* Navigate to the directory you have placed Xampp vHosts Manager `(example: cd /D D:\vhostsManager)`.
 * Execute the command `xvhosts install` and follow the required steps.
 * Exit terminal.
 
 > Note: See [here](https://www.howtogeek.com/194041/how-to-open-the-command-prompt-as-administrator-in-windows-8.1/) to know how to to open the command prompt as Administrator.
 
 ## Usage
-Because of a path to the Xampp vHosts Manager application directory has been added to the system environment variables during the installation process, now you can just open the terminal anywhere and excute one of the following `xvhosts` commands:
+Because of a path to the Xampp vHosts Manager application directory has been added to the system environment variables during the installation process, now you can just open the terminal (no need to open in Administrator mode anymore) anywhere and excute one of the following `xvhosts` commands:
 
 #### Display the help message
 
