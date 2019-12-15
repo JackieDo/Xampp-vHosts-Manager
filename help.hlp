@@ -1,0 +1,39 @@
+Virtual hosts manager for Xampp on Windows OS
+---------------------------------------------
+
+Usage:
+    xvhosts <command> [HOST_NAME]
+
+
+Available commands:
+    install               Intergrate Xampp vHosts Manager into Xampp
+                          (require running in Administrator mode).
+    new                   Create a new virtual host.
+    show                  Display information of specific virtual host.
+    remove                Remove specific virtual host.
+    add_ssl               Add SSL certificate to specific virtual host.
+    remove_ssl            Remove SSL certificate of specific virtual host.
+    list                  List all existing virtual hosts.
+    restart_apache        Restart Apache httpd.
+    help                  Display the help message.
+
+
+Examples:
+    xvhosts new demo.local
+    - Will start to creating new virtual host with
+      name "demo.local".
+
+    xvhosts new
+    - Will be asked to enter virtual host name and
+      continue to create it.
+
+    xvhosts show demo.local
+    - Will display information of virtual host
+      with name "demo.local".
+
+    xvhosts list
+    - Will list all virtual hosts that you added.
+
+    xvhosts add_ssl home.local
+    - Will start to adding SSL certificate to
+      virtual host "home.local" if exists.

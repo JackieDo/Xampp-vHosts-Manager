@@ -1,0 +1,33 @@
+HOME     = $ENV::XVHM_APP_DIR
+RANDFILE = $ENV::XVHM_TMP_DIR/.rnd
+HOSTNAME = $ENV::XVHM_HOSTNAME
+
+####################################################################
+[ req ]
+default_bits       = 2048
+default_keyfile    = $HOSTNAME.key.pem
+distinguished_name = server_distinguished_name
+req_extensions     = server_req_extensions
+string_mask        = utf8only
+
+####################################################################
+[ server_distinguished_name ]
+
+####################################################################
+[ server_req_extensions ]
+subjectKeyIdentifier = hash
+basicConstraints     = CA:FALSE
+keyUsage             = digitalSignature, keyEncipherment
+subjectAltName       = @alternate_names
+nsComment            = "OpenSSL Generated Certificate"
+
+####################################################################
+[ alternate_names ]
+DNS.1 = $HOSTNAME
+DNS.2 = www.$HOSTNAME
+
+# IPv4 $HOSTNAME
+IP.1 = 127.0.0.1
+
+# IPv6 $HOSTNAME
+IP.2 = ::1
