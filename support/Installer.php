@@ -112,11 +112,21 @@ class Installer
         $message = 'Registering Trusted CA with name "' .$_ENV['XVHM_OPENSSL_SUBJECT_CN']. '"...';
         Console::line($message, false);
 
-        exec('cscript //NoLogo "' . $_ENV['XVHM_CACERT_GENERATOR'] . '"');
+        $callPowerExec = 'cscript //NoLogo "' . $_ENV['XVHM_POWER_EXECUTOR'] . '"';
+        exec($callPowerExec . ' -w -i "' . $_ENV['XVHM_CACERT_GENERATE_SCRIPT'] . '"');
 
         if (is_file($_ENV['XVHM_CACERT_DIR'] . '\cacert.crt')) {
-            Console::line(str_repeat(' ', max(73 - strlen($message), 1)) . 'Successful');
-            return true;
+            $installCacertLogFile = $_ENV['XVHM_TMP_DIR'] . '\install-cacert.log';
+            exec($callPowerExec . ' -w -e -i CERTUTIL -addstore -enterprise -f -v Root "' . $_ENV['XVHM_CACERT_DIR'] . '\cacert.crt" ">' . $installCacertLogFile . '"');
+
+            $logContent = trim(file_get_contents($installCacertLogFile));
+            $logRows = explode(PHP_EOL, $logContent);
+            @unlink($installCacertLogFile);
+
+            if (end($logRows) == 'CertUtil: -addstore command completed successfully.') {
+                Console::line(str_repeat(' ', max(73 - strlen($message), 1)) . 'Successful');
+                return true;
+            }
         }
 
         // If generating failed
@@ -137,7 +147,8 @@ class Installer
         $message = 'Granting permissions to Windows host file...';
         Console::line($message, false);
 
-        exec('cscript //NoLogo "' . $_ENV['XVHM_HOSTSFILE_PERMS_GRANTOR'] . '"');
+        $winHostsFile = realpath($_SERVER['SystemRoot'] . '\System32\drivers\etc\hosts');
+        exec('cscript //NoLogo "' .$_ENV['XVHM_POWER_EXECUTOR']. '" -w -i -e icacls "' . $winHostsFile . '" /grant Users:MRXRW');
 
         Console::line(str_repeat(' ', max(73 - strlen($message), 1)) . 'Successful');
     }
@@ -208,7 +219,7 @@ class Installer
     {
         $message = 'Registering application\'s path to system environment...';
         Console::line($message, false);
-        exec('cscript //NoLogo "' . $_ENV['XVHM_REGISTER_APPDIR_IMPLEMENTER'] . '"');
+        exec('cscript //NoLogo "' . $_ENV['XVHM_APPPATH_REGISTER'] . '"');
         Console::line(str_repeat(' ', max(73 - strlen($message), 1)) . 'Successful');
     }
 

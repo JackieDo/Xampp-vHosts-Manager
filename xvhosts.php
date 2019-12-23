@@ -73,6 +73,10 @@ if (isset($_SERVER['argv'][1])) {
             $manager->removeSSLOfHost($_SERVER['argv'][2]);
             break;
 
+        case 'restartApache':
+            $manager->askRestartApache('Are you sure you want to restart Apache?');
+            break;
+
         default:
             break;
     }

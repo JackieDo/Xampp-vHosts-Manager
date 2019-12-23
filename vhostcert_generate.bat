@@ -18,7 +18,7 @@ goto startGenerate
 echo.
 echo Missing environment variables or input parameters.
 echo Please run application from command "xvhosts"
-exit /B
+exit /B 1
 
 :startGenerate
 set XVHM_HOSTNAME=%~1

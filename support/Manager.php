@@ -32,13 +32,11 @@ class Manager
         $this->paths['vhostCertKeyDir']   = $this->prepareVhostCertKeyDir();
 
         // File paths
-        $this->paths['winHostsFile']           = realpath($_SERVER['SystemRoot'] . '\System32\drivers\etc\hosts');
-        $this->paths['vhostConfigTemplate']    = $_ENV['XVHM_VHOST_CONFIG_TEMPLATE'];
-        $this->paths['vhostSSLConfigTemplate'] = $_ENV['XVHM_VHOST_SSL_CONFIG_TEMPLATE'];
-        $this->paths['vhostCertGenerator']     = $_ENV['XVHM_VHOST_CERT_GENERATOR'];
-        $this->paths['hostsfilePermsGrantor']  = $_ENV['XVHM_HOSTSFILE_PERMS_GRANTOR'];
-        $this->paths['apacheStartImplementer'] = $_ENV['XVHM_APACHE_START_IMPLEMENTER'];
-        $this->paths['apacheStopImplementer']  = $_ENV['XVHM_APACHE_STOP_IMPLEMENTER'];
+        $this->paths['winHostsFile']            = realpath($_SERVER['SystemRoot'] . '\System32\drivers\etc\hosts');
+        $this->paths['vhostConfigTemplate']     = $_ENV['XVHM_VHOST_CONFIG_TEMPLATE'];
+        $this->paths['vhostSSLConfigTemplate']  = $_ENV['XVHM_VHOST_SSL_CONFIG_TEMPLATE'];
+        $this->paths['vhostCertGenerateScript'] = $_ENV['XVHM_VHOST_CERT_GENERATE_SCRIPT'];
+        $this->paths['powerExecutor']           = $_ENV['XVHM_POWER_EXECUTOR'];
     }
 
     public function showHostInfo($hostName = null, $processStandalone = true, $indentSpaces = 2)
@@ -359,6 +357,22 @@ class Manager
         Console::breakline();
         Console::hrline();
         $this->askRestartApache();
+    }
+
+    public function askRestartApache($question = null)
+    {
+        $question      = $question ?: 'Do you want to restart Apache?';
+        $restartApache = Console::confirm($question);
+
+        if ($restartApache) {
+            Console::breakline();
+
+            Console::line('Stopping Apache Httpd...');
+            exec('cscript //NoLogo "' . $this->paths['powerExecutor'] . '" -w -i -n "' . $this->paths['xamppDir'] . '\apache_stop.bat"');
+
+            Console::line('Starting Apache Httpd...');
+            exec('cscript //NoLogo "' . $this->paths['powerExecutor'] . '" -i -n "' . $this->paths['xamppDir'] . '\apache_start.bat"');
+        }
     }
 
     private function prepareVhostConfigDir()
@@ -730,7 +744,7 @@ class Manager
         $message = 'Generating the cert and private key files...';
         Console::line($message, false);
 
-        exec('cscript //NoLogo "' . $this->paths['vhostCertGenerator'] . '" "' . $hostName . '"');
+        exec('cscript //NoLogo "' . $this->paths['powerExecutor'] . '" -w -i "' . $this->paths['vhostCertGenerateScript'] . '" "' . $hostName . '"');
 
         if (is_file($this->paths['vhostCertDir'] .DS. $hostName . '.cert') && is_file($this->paths['vhostCertKeyDir'] .DS. $hostName . '.key')) {
             Console::line(str_repeat(' ', max(73 - strlen($message), 1)) . 'Successful');
@@ -841,19 +855,5 @@ class Manager
         }
 
         return @unlink($filePath);
-    }
-
-    private function askRestartApache()
-    {
-        $restartApache = Console::confirm('Do you want to restart Apache?');
-
-        if ($restartApache) {
-            Console::breakline();
-            Console::line('Stopping Apache Httpd...');
-            exec('cscript //NoLogo "' . $this->paths['apacheStopImplementer'] . '"');
-
-            Console::line('Starting Apache Httpd...');
-            exec('cscript //NoLogo "' . $this->paths['apacheStartImplementer'] . '"');
-        }
     }
 }

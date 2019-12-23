@@ -17,7 +17,7 @@ goto startGenerate
 echo.
 echo Missing environment variables or input parameters.
 echo Please run application from command "xvhosts"
-exit /B
+exit /B 1
 
 :startGenerate
 if exist "%XVHM_TMP_DIR%" del /Q "%XVHM_TMP_DIR%\."
@@ -27,7 +27,7 @@ if not exist "%XVHM_CACERT_DIR%" mkdir "%XVHM_CACERT_DIR%"
 if exist "%XVHM_CACERT_DIR%\cacert.crt" (
     if exist "%XVHM_CACERT_DIR%\cacert.name" (
         for /F "tokens=* USEBACKQ" %%v in ("%XVHM_CACERT_DIR%\cacert.name") do (
-            if "%XVHM_OPENSSL_SUBJECT_CN%"=="%%v" goto installCert
+            if "%XVHM_OPENSSL_SUBJECT_CN%"=="%%v" exit /B
         )
     )
 )
@@ -71,16 +71,8 @@ set keyFile=
 set nameFile=
 del /Q "%XVHM_TMP_DIR%\."
 
-:installCert
 echo.
-echo ========================================
-echo Installing the CA certificate
-
-cscript //NoLogo "%XVHM_CACERT_INSTALLER%" "%XVHM_CACERT_DIR%\cacert.crt"
-
-echo.
-echo ========================================
-echo The "%XVHM_OPENSSL_SUBJECT_CN%" was registered to system.
-echo And certificate bundle of this CA is being stored at %XVHM_CACERT_DIR%
+echo ============================================================
+echo Finish job.
 
 endlocal
