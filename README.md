@@ -1,5 +1,7 @@
 # Xampp vHosts Manager
-Virtual hosts (SSL) management system (in console mode) for Xampp on Windows OS
+Virtual hosts (include SSL) management system (in console mode) for Xampp on Windows OS
+
+Documentation languages >>> ( English | [Vietnamese](https://github.com/JackieDo/Xampp-vHosts-Manager/blob/master/README_vi.md) )
 
 ![Xampp vHosts Manager GitHub cover](https://user-images.githubusercontent.com/9862115/70820328-f78de800-1e0a-11ea-894a-b7021942c158.jpg)
 
@@ -22,12 +24,12 @@ Therefore, this project was born, in order to strengthen Xampp, helping users ta
 * List all existing virtual hosts.
 * Add SSL certificate to an existing virtual host.
 * Remove SSL certificate of an existing virtual host.
-* Stop Xampp Apache Httpd
-* Start Xampp Apache Httpd
+* Stop Xampp Apache Httpd.
+* Start Xampp Apache Httpd.
 * Restart Xampp Apache Httpd.
 
 # Overview
-Look at one of the following topics to learn more about Xampp vHosts Manager
+Look at one of the following topics to learn more about Xampp vHosts Manager.
 
 * [Compatibility](#compatibility)
 * [Requirement](#requirement)
@@ -79,12 +81,12 @@ $ composer create-project jackiedo/xampp-vhosts-manager xvhm "1.*"
 * Open a terminal in Administrator mode `(run as Administrator)`.
 * Navigate to the directory you have placed Xampp vHosts Manager `(example: cd /D D:\xvhm)`.
 * Execute the command `xvhosts install` and follow the required steps.
-* Exit terminal.
+* Exit terminal (to remove temporary environment variables).
 
 > Note: See [here](https://www.howtogeek.com/194041/how-to-open-the-command-prompt-as-administrator-in-windows-8.1/) to know how to to open the command prompt as Administrator.
 
 ## Usage
-Because of a path to the Xampp vHosts Manager application directory has been added to the system environment variables during the installation process, now you can just open the terminal `(no need to open in Administrator mode anymore)` anywhere and excute one of the following `xvhosts` commands:
+Because of a path to the Xampp vHosts Manager application directory has been added to the Windows Path Environment Variables during the installation process, now you can just open the terminal `(no need to open in Administrator mode anymore)` anywhere and excute one of the following `xvhosts` commands:
 
 #### Display the help message
 
@@ -105,7 +107,7 @@ Example:
 $ xvhosts new demo.local
 ```
 
-> Note: The HOST_NAME parameter is optional. If you do not pass it to the command, you will be asked to enter information for it.
+> Note: The HOST_NAME parameter is optional. If you do not pass it to the command statement, you will also be asked to enter this information later.
 
 #### Display information of an existing virtual host
 
@@ -193,7 +195,7 @@ Syntax:
 $ xvhosts register_path
 ```
 
-> Note: You need to accept this feature to be implemented in Administrator mode.
+> Note: You need to accept this process to be performed with Administrator permission.
 
 ## Configuration
 All onfiguration are put in an ini file with name `settings.ini` located in Xampp vHosts Manager application directory. The structure of this file looks like this:

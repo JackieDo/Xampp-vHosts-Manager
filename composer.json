@@ -1,6 +1,6 @@
 {
     "name": "jackiedo/xampp-vhosts-manager",
-    "description": "Virtual hosts (SSL) management system (in console mode) for Xampp on Windows OS.",
+    "description": "Virtual hosts (include SSL) management system (in console mode) for Xampp on Windows OS.",
     "keywords": [
         "xampp",
         "virtual-hosts",
