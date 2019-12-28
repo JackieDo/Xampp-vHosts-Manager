@@ -3,7 +3,6 @@ cls
 setlocal EnableExtensions
 
 :: Check necessary data
-if not "%XVHM_APP_STARTED%"=="true" goto missing
 if "%XVHM_APP_DIR%"=="" goto missing
 if "%XVHM_TMP_DIR%"=="" goto missing
 if "%XVHM_CACERT_DIR%"=="" goto missing

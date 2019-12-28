@@ -1,0 +1,29 @@
+{
+    "name": "jackiedo/xampp-vhosts-manager",
+    "description": "Virtual hosts (SSL) management system (in console mode) for Xampp on Windows OS.",
+    "keywords": [
+        "xampp",
+        "virtual-hosts",
+        "vhosts",
+        "ssl-certificates",
+        "ssl-cert",
+        "ssl",
+        "domain",
+        "manager",
+        "console"
+    ],
+    "license": "MIT",
+    "type": "project",
+    "require": {
+        "php": ">=5.4"
+    },
+    "scripts": {
+        "post-create-project-cmd": [
+            "xvhosts.bat install"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "optimize-autoloader": true
+    }
+}

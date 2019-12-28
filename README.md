@@ -22,6 +22,8 @@ Therefore, this project was born, in order to strengthen Xampp, helping users ta
 * List all existing virtual hosts.
 * Add SSL certificate to an existing virtual host.
 * Remove SSL certificate of an existing virtual host.
+* Stop Xampp Apache Httpd
+* Start Xampp Apache Httpd
 * Restart Xampp Apache Httpd.
 
 # Overview
@@ -30,6 +32,8 @@ Look at one of the following topics to learn more about Xampp vHosts Manager
 * [Compatibility](#compatibility)
 * [Requirement](#requirement)
 * [Installation](#installation)
+    - [Via Composer Create-Project](#via-composer-create-project)
+    - [Via Manual Download](#via-manual-download)
 * [Usage](#usage)
     - [Display the help message](#display-the-help-message)
     - [Create new virtual host](#create-new-virtual-host)
@@ -38,7 +42,10 @@ Look at one of the following topics to learn more about Xampp vHosts Manager
     - [Remove an existing virtual host](#remove-an-existing-virtual-host)
     - [Add SSL certificate to an existing virtual host](#add-ssl-certificate-to-an-existing-virtual-host)
     - [Remove SSL certificate of an existing virtual host](#remove-ssl-certificate-of-an-existing-virtual-host)
+    - [Stop Apache Httpd](#stop-apache-httpd)
+    - [Start Apache Httpd](#start-apache-httpd)
     - [Restart Apache Httpd](#restart-apache-httpd)
+    - [Register path of application](#register-path-of-application)
 * [Configuration](#configuration)
 * [License](#license)
 * [Thanks from author](#thanks-for-use)
@@ -47,18 +54,30 @@ Look at one of the following topics to learn more about Xampp vHosts Manager
 Xampp vHosts Manager is compatible with all Xampp versions using PHP 5.4 or higher.
 
 ## Requirement
-Xampp vHosts Manager takes full advantage of what's included in Xampp, nothing more needed. So, you just need two following things:
+Xampp vHosts Manager takes full advantage of what's included in Xampp, nothing more needed. So, you just need following things:
 
-* Xampp installed (of course).
-* Added the path to PHP directory of Xampp to system environment variables.
+* Installed Xampp (of course).
+* Added the path to PHP directory of Xampp into Windows Path Environment Variable.
+* (Optional) Installed Composer.
 
-> _Note: See [here](https://helpdeskgeek.com/windows-10/add-windows-path-environment-variable/) to know how to add Windows path environment variable._
+> _Note: See [here](https://helpdeskgeek.com/windows-10/add-windows-path-environment-variable/) to know how to add Windows Path Environment Variable._
 
 ## Installation
+There are two installation methods, via Composer or manual download. It is recommended to use the method via Composer if you already have it installed.
+
+#### Via Composer Create-Project
+* Open a terminal.
+* Navigate to the directory you want to install Xampp vHosts Manager into.
+* Run composer create-project command:
+```
+$ composer create-project jackiedo/xampp-vhosts-manager xvhm "1.*"
+```
+
+#### Via Manual Download
 * Download the [latest release](https://github.com/JackieDo/Xampp-vHosts-Manager/releases/latest)
-* Extract the archive to a shared location `(example: D:\vhostsManager)`. Note: Should not place in `C:\Program Files` or anywhere else that would require Administrator access for modifying configuration files.
+* Extract the archive to a shared location `(example: D:\xvhm)`. Note: Should not place in `C:\Program Files` or anywhere else that would require Administrator access for modifying configuration files.
 * Open a terminal in Administrator mode `(run as Administrator)`.
-* Navigate to the directory you have placed Xampp vHosts Manager `(example: cd /D D:\vhostsManager)`.
+* Navigate to the directory you have placed Xampp vHosts Manager `(example: cd /D D:\xvhm)`.
 * Execute the command `xvhosts install` and follow the required steps.
 * Exit terminal.
 
@@ -143,12 +162,38 @@ Example:
 $ xvhosts remove_ssl demo.local
 ```
 
+#### Stop Apache Httpd
+
+Syntax:
+```
+$ xvhosts stop_apache
+```
+
+#### Start Apache Httpd
+
+Syntax:
+```
+$ xvhosts start_apache
+```
+
 #### Restart Apache Httpd
 
 Syntax:
 ```
 $ xvhosts restart_apache
 ```
+
+#### Register path of application
+This feature allows you to register the path to the application directory of Xampp vHosts Manager into the Windows Path Environment Variable. Usually, you rarely need this. It is only useful when you need to change the application directory name of Xampp vHosts Manager or move it to another location.
+
+To do this, after you have changed the directory, navigate to the new location of application directory in the command prompt and run the following command:
+
+Syntax:
+```
+$ xvhosts register_path
+```
+
+> Note: You need to accept this feature to be implemented in Administrator mode.
 
 ## Configuration
 All onfiguration are put in an ini file with name `settings.ini` located in Xampp vHosts Manager application directory. The structure of this file looks like this:

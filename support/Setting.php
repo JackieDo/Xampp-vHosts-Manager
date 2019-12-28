@@ -6,9 +6,16 @@ class Setting
 
     public function __construct()
     {
-        if (is_file($_ENV['XVHM_APP_DIR'] . '\settings.ini')) {
-            $this->settings = @parse_ini_file($_ENV['XVHM_APP_DIR'] . '\settings.ini', true);
+        $this->reloadSettings();
+    }
+
+    public function reloadSettings()
+    {
+        if (is_file(getenv('XVHM_APP_DIR') . '\settings.ini')) {
+            $this->settings = @parse_ini_file(getenv('XVHM_APP_DIR') . '\settings.ini', true);
         }
+
+        return $this;
     }
 
     public function all()
@@ -59,6 +66,6 @@ class Setting
             }
         }
 
-        return file_put_contents($_ENV['XVHM_APP_DIR'] . '\settings.ini', ltrim($content));
+        return @file_put_contents(getenv('XVHM_APP_DIR') . '\settings.ini', ltrim($content));
     }
 }

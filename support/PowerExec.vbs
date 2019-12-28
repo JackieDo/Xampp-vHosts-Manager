@@ -6,9 +6,14 @@ Dim objShell: Set objShell = CreateObject("WScript.Shell")
 Dim objFSO: Set objFSO = CreateObject("Scripting.FileSystemObject")
 Dim scriptBaseName: scriptBaseName = objFSO.GetBaseName(WScript.ScriptName)
 Dim scriptExt: scriptExt = LCase(objFSO.GetExtensionName(WScript.ScriptName))
-Dim noOutput: noOutput = false
 
 ' Define subroutines
+Private Sub ClearVars()
+    Set objFSO    = Nothing
+    Set objShell  = Nothing
+    Set objArgs   = Nothing
+End Sub
+
 Private Sub ShowHelp()
     Dim callMethod
 
@@ -22,7 +27,7 @@ Private Sub ShowHelp()
 
     helpMsg = ""  & _
         vbNewLine & "Usage:" & _
-        vbNewLine & "  " & callMethod & " [-k] [-p] [-w] [-e] [(-m | -a)] [-i] [-n] [-h] <command>" & _
+        vbNewLine & "  " & callMethod & " [-k] [-p] [-w] [-e] [(-m | -x)] [-i] [-n] [-h] <command>" & _
         vbNewLine & _
         vbNewLine & "Options:" & _
         vbNewLine & "  -k  Keep the command prompt window after execution; equivalent to ""cmd /k command""." & _
@@ -30,7 +35,7 @@ Private Sub ShowHelp()
         vbNewLine & "  -w  Wait until the execution is terminated and the execution window is closed." & _
         vbNewLine & "  -e  Execute command with elevated permission (run as Administrator)." & _
         vbNewLine & "  -m  Minimize command execution window (visible mode)." & _
-        vbNewLine & "  -a  Maximize command execution window (visible mode)." & _
+        vbNewLine & "  -x  Maximize command execution window (visible mode)." & _
         vbNewLine & "  -i  Hide command execution window (invisible mode)." & _
         vbNewLine & "  -n  Do not present " & scriptBaseName & "'s messages (error or success) except the help." & _
         vbNewLine & "  -h  Display " & scriptBaseName & "'s help message." & _
@@ -47,19 +52,32 @@ Private Sub ShowHelp()
     WScript.Echo helpMsg
 End Sub
 
-Private Sub ShowHelpWithMessage(ByVal message)
+Private Sub ShowHelpWithMessage(ByVal message, ByVal showAs)
     If ((Not message = vbNullString) and (Not message = vbNull)) Then
-        WScript.Echo message
+        WriteMsg message, showAs
     End If
 
     ShowHelp
 End Sub
 
 Private Sub Quit(errorCode)
-    Set objFSO   = Nothing
-    Set objShell = Nothing
-    Set objArgs  = Nothing
+    ClearVars
     WScript.Quit errorCode
+End Sub
+
+Private Sub WriteMsg(ByVal message, ByVal writeAs)
+    If (DetectScriptMode = "Window") Then
+        MsgBox message
+    Else
+        Select Case writeAs
+            Case "output"
+                WScript.StdOut.WriteLine message
+            Case "error"
+                WScript.StdErr.WriteLine message
+            Case "echo"
+                WScript.Echo message
+        End Select
+    End If
 End Sub
 
 ' Define functions
@@ -90,7 +108,7 @@ Private Function ParseArguments(ByVal arguments)
 
         If (isElevateOption) Then
             If (lcaseCurrArg = "/?" or lcaseCurrArg = "/h" or lcaseCurrArg = "/help" or lcaseCurrArg = "-h" or lcaseCurrArg = "--help") Then
-                ShowHelpWithMessage "Execute commands with more advanced controls."
+                ShowHelpWithMessage "Execute commands with more advanced controls.", "success"
                 Quit 0
             End If
 
@@ -105,14 +123,14 @@ Private Function ParseArguments(ByVal arguments)
                     objParams("Elevated") = true
                 Case "m"
                     If (Not objParams("WindowSize") = "Normal") Then
-                        ShowHelpWithMessage scriptBaseName & " error: Cannot use the [-m] and [-a] parameters at the same time. Cancel the operation."
+                        ShowHelpWithMessage scriptBaseName & " error: Cannot use the [-m] and [-a] parameters at the same time. Cancel the operation.", "error"
                         Quit 1
                     End If
 
                     objParams("WindowSize") = "Minimized"
-                Case "a"
+                Case "x"
                     If (Not objParams("WindowSize") = "Normal") Then
-                        ShowHelpWithMessage scriptBaseName & " error: Cannot use the [-m] and [-a] parameters at the same time. Cancel the operation."
+                        ShowHelpWithMessage scriptBaseName & " error: Cannot use the [-m] and [-a] parameters at the same time. Cancel the operation.", "error"
                         Quit 1
                     End If
 
@@ -122,7 +140,7 @@ Private Function ParseArguments(ByVal arguments)
                 Case "n"
                     objParams("NoOutput") = true
                 Case Else
-                    ShowHelpWithMessage scriptBaseName & " error: Unknown argument """ & currentArg & """. Cancel the operation."
+                    ShowHelpWithMessage scriptBaseName & " error: Unknown argument """ & currentArg & """. Cancel the operation.", "error"
                     Quit 1
             End Select
         Else
@@ -192,123 +210,125 @@ Private Function RandomString()
     RandomString = TempCopy
 End Function
 
-' Main program
+'''''''''''''''' START MAIN PROGRAM ''''''''''''''''
+
+' Notice if runnig in Window mode
 If (DetectScriptMode() = "Window") Then
-    WScript.Echo "Sorry! This application only runs in console mode." & vbNewLine & _
+    MsgBox "Sorry! This application only runs in console mode." & vbNewLine & _
         "Please run this application with the ""cscript"" command."
     Quit 1
 End If
 
-If (objArgs.Count > 0) Then
-    Dim objParams: Set objParams = ParseArguments(objArgs)
-
-    If (Not objParams("Command") = "") Then
-        noOutput = objParams("NoOutput")
-
-        If (objParams("PushdCurrDir")) Then
-            objParams("Command") = "pushd """ & objShell.CurrentDirectory & """" & " & " & objParams("Command")
-        End If
-
-        Dim tempFolder: tempFolder = objShell.ExpandEnvironmentStrings("%TEMP%")
-        Dim commandErrorLog: commandErrorLog = tempFolder & "\" & LCase(scriptBaseName) & "-command-error-" & RandomString() & ".log"
-
-        objParams("Command") = objParams("Command") & " 2>""" & commandErrorLog & """"
-        objParams("Command") = Replace(objParams("Command"), """", "\""")
-
-        Dim powerShellWait
-        If (objParams("WaitForFinish")) Then
-            powerShellWait = " -Wait"
-        Else
-            powerShellWait = ""
-        End If
-
-        Dim powerShellWindow
-        If (objParams("ShowWindow")) Then
-            powerShellWindow = " -WindowStyle " & objParams("WindowSize")
-        Else
-            powerShellWindow = " -WindowStyle Hidden"
-        End If
-
-        Dim powerShellRunAs
-        If (objParams("Elevated")) Then
-            powerShellRunAs = " -Verb RunAs"
-        Else
-            powerShellRunAs = ""
-        End If
-
-        Dim powerShellCommand
-        powerShellCommand = "powershell -Command ""Start-Process cmd -ArgumentList {""" & objParams("CmdOptions") & " \""" & objParams("Command") & "\""""}" & _
-                            powerShellRunAs & powerShellWait & powerShellWindow & """"
-
-        Set objParams = Nothing
-
-        ' Method 1: Use Run function if we do not need to store the process ID
-        Dim exitCode: exitCode = objShell.Run(powerShellCommand, 0, true)
-
-        If (exitCode = 1) Then
-            If (Not noOutput) Then
-                WScript.Echo "The operation was canceled by the user."
-            End If
-
-            Quit 1
-        End If
-
-        ' Method 2: Use Exec function if want to store process ID
-        ' Dim objExec: Set objExec = objShell.Exec(powerShellCommand)
-        ' Dim processID: processID = objExec.ProcessID
-
-        ' While (objExec.Status = 0)
-        '     WScript.Sleep 50
-
-        '     If (objExec.ExitCode = 1) Then
-        '         If (Not noOutput) Then
-        '            WScript.Echo "The operation was canceled by the user."
-        '         End If
-
-        '         Set objExec = Nothing
-        '         Quit 1
-        '     End If
-        ' Wend
-
-        ' Set objExec = Nothing
-
-        ' Check the command execution
-        Dim openFile: Set openFile = objFSO.OpenTextFile(commandErrorLog, 1, true)
-        Dim errorContent
-
-        If Not openFile.AtEndOfStream Then
-            ' errorContent = openFile.ReadAll()
-            errorContent = errorContent & openFile.ReadAll()
-        Else
-            errorContent = ""
-        End If
-
-        Set openFile = Nothing
-        objFSO.DeleteFile(commandErrorLog)
-
-        If (Not errorContent = "") Then
-            If (Not noOutput) Then
-                WScript.Echo "The execution of the command occurred an error:"
-                WScript.Echo errorContent
-            End If
-
-            Quit 1
-        End If
-
-        ' Finish command excution
-        If (Not noOutput) Then
-            WScript.Echo "The execution of the command has been completed successfully."
-        End If
-    Else
-        ShowHelpWithMessage scriptBaseName & " error: Missing arguments."
-        Quit 1
-    End If
-Else
-    ShowHelpWithMessage scriptBaseName & " error: Missing arguments."
+' Arguments is missing
+If (objArgs.Count <= 0) Then
+    ShowHelpWithMessage scriptBaseName & " error: Missing input arguments.", "error"
     Quit 1
 End If
 
-' Clear global objects
-Set objFSO   = Nothing
-Set objShell = Nothing
-Set objArgs  = Nothing
+' Parse arguments
+Dim objParams: Set objParams = ParseArguments(objArgs)
+
+' The command argument is missing
+If (Trim(objParams("Command")) = "") Then
+    ShowHelpWithMessage scriptBaseName & " error: The ""command"" argument is missing.", "error"
+    Set objParams = Nothing
+    Quit 1
+End If
+
+' Push current dir before execute command
+If (objParams("PushdCurrDir")) Then
+    objParams("Command") = "pushd """ & objShell.CurrentDirectory & """" & " & " & objParams("Command")
+End If
+
+' Prepare error lof file if the execution of command occurred error
+Dim tempFolder: tempFolder = objShell.ExpandEnvironmentStrings("%TEMP%")
+Dim errorLogPath: errorLogPath = tempFolder & "\" & LCase(scriptBaseName) & "-error-" & RandomString() & ".log"
+objParams("Command") = objParams("Command") & " || type nul>""" & errorLogPath & """"
+
+' Build powershell command
+objParams("Command") = Replace(objParams("Command"), """", "\""")
+
+Dim powerShellWait
+If (objParams("WaitForFinish")) Then
+    powerShellWait = " -Wait"
+Else
+    powerShellWait = ""
+End If
+
+Dim powerShellWindow
+If (objParams("ShowWindow")) Then
+    powerShellWindow = " -WindowStyle " & objParams("WindowSize")
+Else
+    powerShellWindow = " -WindowStyle Hidden"
+End If
+
+Dim powerShellRunAs
+If (objParams("Elevated")) Then
+    powerShellRunAs = " -Verb RunAs"
+Else
+    powerShellRunAs = ""
+End If
+
+Dim powerShellCommand
+powerShellCommand = "powershell -Command ""Start-Process cmd -ArgumentList {""" & objParams("CmdOptions") & " \""" & objParams("Command") & "\""""}" & _
+                    powerShellRunAs & powerShellWait & powerShellWindow & """"
+
+' Run powershell command
+' Method 1: Use Run function if we do not need to store the process ID
+Dim exitCode: exitCode = objShell.Run(powerShellCommand, 0, true)
+
+If (exitCode = 1) Then
+    If (Not objParams("NoOutput")) Then
+        WriteMsg "The operation was canceled by user.", "error"
+    End If
+
+    Set objParams = Nothing
+    Quit 1
+End If
+
+' Method 2: Use Exec function if want to store process ID
+' Dim objExec: Set objExec = objShell.Exec(powerShellCommand)
+' Dim processID: processID = objExec.ProcessID
+' While (objExec.Status = 0)
+'     WScript.Sleep 50
+'     If (objExec.ExitCode = 1) Then
+'         If (Not objParams("NoOutput")) Then
+'            WriteMsg "The operation was canceled by the user.", "error"
+'         End If
+'         Set objExec = Nothing
+'         Quit 1
+'     End If
+' Wend
+' Set objExec = Nothing
+
+' If do not wait for finish
+If (Not objParams("WaitForFinish")) Then
+    If (Not objParams("NoOutput")) Then
+        WriteMsg "The operation has been executed.", "output"
+    End If
+
+    Set objParams = Nothing
+    Quit 0
+End If
+
+' If the execution of command occurred error
+If (objFSO.FileExists(errorLogPath)) Then
+    objFSO.DeleteFile(errorLogPath)
+
+    If (Not objParams("NoOutput")) Then
+        WriteMsg "The execution of the operation occurred error.", "error"
+    End If
+
+    Set objParams = Nothing
+    Quit 1
+End If
+
+' Finish command excution
+If (Not objParams("NoOutput")) Then
+    WriteMsg "The execution of the operation has been successfully completed.", "output"
+End If
+
+Set objParams = Nothing
+Quit 0
+
+'''''''''''''''' END MAIN PROGRAM ''''''''''''''''

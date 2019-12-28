@@ -20,9 +20,9 @@ class Console
         return self::getSimpleConsole()->askInput($message, $defaultValue);
     }
 
-    public static function line($message = null, $breakLine = true)
+    public static function line($message = null, $breakLine = true, $beginAtColumn = 0)
     {
-        self::getSimpleConsole()->showMessage($message, $breakLine);
+        self::getSimpleConsole()->showMessage($message, $breakLine, $beginAtColumn);
     }
 
     public static function breakline($multiplier = 1)
@@ -35,9 +35,9 @@ class Console
         self::getSimpleConsole()->showMessage(str_repeat($symbol, $width));
     }
 
-    public static function terminate($message = null)
+    public static function terminate($message = null, $exitStatus = 0)
     {
-        self::getSimpleConsole()->terminate($message);
+        self::getSimpleConsole()->terminate($message, $exitStatus);
     }
 
     private static function getSimpleConsole()
@@ -97,23 +97,25 @@ class SimpleConsole
         return $answer;
     }
 
-    public function showMessage($message = null, $breakLine = true)
+    public function showMessage($message = null, $breakLine = true, $beginAtColumn = 0)
     {
-        echo $message;
+        $spaceBefore = ($beginAtColumn > 0) ? str_repeat(' ', $beginAtColumn) : '';
+
+        echo $spaceBefore . $message;
 
         if ($breakLine) {
             echo PHP_EOL;
         }
     }
 
-    public function terminate($message = null)
+    public function terminate($message = null, $exitStatus = 0)
     {
         if (! is_null($message)) {
             $message .= PHP_EOL;
         }
 
         $this->showMessage($message . $this->defaultMessages['terminate']);
-        exit;
+        exit($exitStatus);
     }
 
     private function getInputFromKeyboard($defaultValue = null)

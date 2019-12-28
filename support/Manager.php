@@ -2,41 +2,27 @@
 
 define('DS', DIRECTORY_SEPARATOR);
 
-require_once __DIR__.'/Console.php';
-require_once __DIR__.'/Setting.php';
+require_once __DIR__.'/Application.php';
 
-class Manager
+class Manager extends Application
 {
-    protected $settings = null;
-    protected $paths    = array();
-    protected $vhosts   = array();
+    protected $vhosts = array();
 
     public function __construct()
     {
-        Console::setDefaultMessages(array('terminate' => 'Xampp vHosts Manager is terminating...'));
+        if (! is_file(getenv('XVHM_APP_DIR') . '\settings.ini')) {
+            $this->requireInstall();
+        }
 
-        $this->loadPaths();
-        $this->loadSettings();
+        parent::__construct();
+
+        if (! is_file($this->paths['caCertDir'] . '\cacert.crt')) {
+            $this->requireInstall();
+        }
+
+        $this->prepareDirectories();
+        $this->loadApacheSettings();
         $this->loadAllHosts();
-    }
-
-    private function loadPaths()
-    {
-        // Dir paths
-        $this->paths['appDir']            = realpath($_ENV['XVHM_APP_DIR']);
-        $this->paths['xamppDir']          = realpath($_ENV['XVHM_XAMPP_DIR']);
-        $this->paths['apacheDir']         = realpath($_ENV['XVHM_APACHE_DIR']);
-        $this->paths['vhostConfigDir']    = $this->prepareVhostConfigDir();
-        $this->paths['vhostSSLConfigDir'] = $this->prepareVhostSSLConfigDir();
-        $this->paths['vhostCertDir']      = $this->prepareVhostCertDir();
-        $this->paths['vhostCertKeyDir']   = $this->prepareVhostCertKeyDir();
-
-        // File paths
-        $this->paths['winHostsFile']            = realpath($_SERVER['SystemRoot'] . '\System32\drivers\etc\hosts');
-        $this->paths['vhostConfigTemplate']     = $_ENV['XVHM_VHOST_CONFIG_TEMPLATE'];
-        $this->paths['vhostSSLConfigTemplate']  = $_ENV['XVHM_VHOST_SSL_CONFIG_TEMPLATE'];
-        $this->paths['vhostCertGenerateScript'] = $_ENV['XVHM_VHOST_CERT_GENERATE_SCRIPT'];
-        $this->paths['powerExecutor']           = $_ENV['XVHM_POWER_EXECUTOR'];
     }
 
     public function showHostInfo($hostName = null, $processStandalone = true, $indentSpaces = 2)
@@ -70,6 +56,20 @@ class Manager
             Console::line($indentString . '- SSL config file       : ' . $hostInfo['sslConfigFile']);
             Console::line($indentString . '- SSL certificate file  : ' . $hostInfo['certFile']);
             Console::line($indentString . '- SSL private key file  : ' . $hostInfo['certKeyFile']);
+        }
+
+        if ($processStandalone) {
+            Console::breakline();
+            Console::hrline();
+            $showMore = Console::confirm('Do you want to show information of another virtual host?');
+
+            if ($showMore) {
+                Console::breakline();
+                $this->showHostInfo();
+            }
+
+            Console::breakline();
+            Console::terminate('All jobs are completed.');
         }
     }
 
@@ -107,6 +107,10 @@ class Manager
                 }
             }
         }
+
+        Console::breakline();
+        Console::hrline();
+        Console::terminate('Your request is completed.');
     }
 
     public function removeHost($hostName = null)
@@ -153,10 +157,21 @@ class Manager
 
         unset($this->vhosts[$hostName]);
 
-        // Ask restart Apache
+        // Ask to remove another
         Console::breakline();
         Console::hrline();
+        $removeMore = Console::confirm('Do you want to remove another virtual host?');
+
+        if ($removeMore) {
+            Console::breakline();
+            $this->removeHost();
+        }
+
+        // Ask restart Apache
         $this->askRestartApache();
+
+        Console::breakline();
+        Console::terminate('All jobs are completed.');
     }
 
     public function addSSLtoHost($hostName = null, $processStandalone = true)
@@ -188,7 +203,7 @@ class Manager
         if (! $createdCertAndKey) {
             if ($processStandalone) {
                 Console::breakline();
-                Console::terminate('Error while create SSL certificate files');
+                Console::terminate('Error while create SSL certificate files', 1);
             } else {
                 Console::line('Cancelling adding SSL for this host...');
                 return;
@@ -201,7 +216,7 @@ class Manager
         if (is_null($sslConfigFile)) {
             if ($processStandalone) {
                 Console::breakline();
-                Console::terminate('Error while create SSL config file');
+                Console::terminate('Error while create SSL config file', 1);
             } else {
                 Console::line('Cancelling adding SSL for this host...');
                 return;
@@ -217,19 +232,29 @@ class Manager
         if ($processStandalone) {
             // Show recent host info
             Console::breakline();
-            Console::hrline();
             Console::line('The following is information about the virtual host that just updated:');
             Console::breakline();
             $this->showHostInfo($hostName, false);
 
-            // Ask restart Apache
+            // Ask to add SSL for another
             Console::breakline();
             Console::hrline();
+            $addMore = Console::confirm('Do you want to add SSL for another virtual host?');
+
+            if ($addMore) {
+                Console::breakline();
+                $this->addSSLtoHost();
+            }
+
+            // Ask restart Apache
             $this->askRestartApache();
+
+            Console::breakline();
+            Console::terminate('All jobs are completed.');
         }
     }
 
-    public function removeSSLOfHost($hostName)
+    public function removeSSLOfHost($hostName = null)
     {
         $hostName = $this->tryGetHostName($hostName);
 
@@ -272,15 +297,25 @@ class Manager
 
         // Show recent host info
         Console::breakline();
-        Console::hrline();
         Console::line('The following is information about the virtual host that just updated:');
         Console::breakline();
         $this->showHostInfo($hostName, false);
 
-        // Ask restart Apache
+        // Ask to remove SSL for another
         Console::breakline();
         Console::hrline();
+        $removeMore = Console::confirm('Do you want to remove SSL for another virtual host?');
+
+        if ($removeMore) {
+            Console::breakline();
+            $this->removeSSLOfHost();
+        }
+
+        // Ask restart Apache
         $this->askRestartApache();
+
+        Console::breakline();
+        Console::terminate('All jobs are completed.');
     }
 
     public function newHost($hostName = null)
@@ -314,7 +349,7 @@ class Manager
 
             if (! $createdDocumentRoot) {
                 Console::breakline();
-                Console::terminate('Error while creating document root.');
+                Console::terminate('Error while creating document root.', 1);
             }
         }
 
@@ -323,7 +358,7 @@ class Manager
 
         if (is_null($vhostConfigFile)) {
             Console::breakline();
-            Console::terminate('Error while create host config file');
+            Console::terminate('Error while create host config file', 1);
         }
 
         // Update vhosts info
@@ -348,96 +383,123 @@ class Manager
 
         // Show recent host info
         Console::breakline();
-        Console::hrline();
         Console::line('The following is information about the virtual host that just created:');
         Console::breakline();
         $this->showHostInfo($serverName, false);
 
-        // Ask restart Apache
+        // Ask to create more
         Console::breakline();
         Console::hrline();
+        $createMore = Console::confirm('Do you want to create another virtual host?');
+
+        if ($createMore) {
+            Console::breakline();
+            $this->newHost();
+        }
+
+        // Ask restart Apache
         $this->askRestartApache();
+
+        Console::breakline();
+        Console::terminate('All jobs are completed.');
     }
 
     public function askRestartApache($question = null)
     {
-        $question      = $question ?: 'Do you want to restart Apache?';
-        $restartApache = Console::confirm($question);
+        $question = $question ?: 'Do you want to restart Apache?';
+        $confirm  = Console::confirm($question);
 
-        if ($restartApache) {
+        if ($confirm) {
             Console::breakline();
 
+            $this->stopApache(false);
+            $this->startApache(false);
+        }
+    }
+
+    public function stopApache($askConfirm = true)
+    {
+        if ($askConfirm) {
+            $confirm = Console::confirm('Are you sure you want to stop Apache?');
+        } else {
+            $confirm = true;
+        }
+
+        if ($confirm) {
+            if ($askConfirm) {
+                Console::breakline();
+            }
+
             Console::line('Stopping Apache Httpd...');
-            exec('cscript //NoLogo "' . $this->paths['powerExecutor'] . '" -w -i -n "' . $this->paths['xamppDir'] . '\apache_stop.bat"');
+            $this->powerExec('"' . $this->paths['xamppDir'] . '\apache_stop.bat"', '-w -i -n');
+        }
+    }
+
+    public function startApache($askConfirm = true)
+    {
+        if ($askConfirm) {
+            $confirm = Console::confirm('Are you sure you want to start Apache?');
+        } else {
+            $confirm = true;
+        }
+
+        if ($confirm) {
+            if ($askConfirm) {
+                Console::breakline();
+            }
 
             Console::line('Starting Apache Httpd...');
-            exec('cscript //NoLogo "' . $this->paths['powerExecutor'] . '" -i -n "' . $this->paths['xamppDir'] . '\apache_start.bat"');
+            $this->powerExec('"' . $this->paths['xamppDir'] . '\apache_start.bat"', '-i -n');
         }
     }
 
-    private function prepareVhostConfigDir()
+    public function registerPath()
     {
-        $vhostsConfigDir = $_ENV['XVHM_VHOST_CONFIG_DIR'];
+        $question = 'Do you want to change the path of XVHM to "' . $this->paths['appDir'] . '"?';
+        $confirm = Console::confirm($question);
 
-        if (! is_dir($vhostsConfigDir)) {
-            mkdir($vhostsConfigDir, 0755, true);
+        if ($confirm) {
+            $message = 'Registering new path into Windows Path Environment Variable...';
+            Console::breakline();
+            Console::line($message, false);
+
+            $this->powerExec('cscript "' . $this->paths['pathRegister'] . '" "' .$this->paths['appDir']. '"', '-w -i -e -n', $outputVal, $exitCode);
+
+            if ($exitCode == 0) {
+                Console::line('Successful', true, max(73 - strlen($message), 1));
+                Console::terminate();
+            }
+
+            Console::line('Failed', true, max(77 - strlen($message), 1));
+            Console::terminate(null, 1);
         }
-
-        return realpath($vhostsConfigDir);
     }
 
-    private function prepareVhostSSLConfigDir()
+    private function requireInstall()
     {
-        $vhostsSSLConfigDir = $_ENV['XVHM_VHOST_SSL_CONFIG_DIR'];
-
-        if (! is_dir($vhostsSSLConfigDir)) {
-            mkdir($vhostsSSLConfigDir, 0755, true);
-        }
-
-        return realpath($vhostsSSLConfigDir);
+        Console::breakline();
+        Console::line('Xampp vHosts Manager has not been integrated into Xampp.');
+        Console::line('Run command "xvhosts install" in Administartor mode to integrate it.');
+        Console::terminate(null, 1);
     }
 
-    private function prepareVhostCertDir()
+    private function prepareDirectories()
     {
-        $vhostsCertDir = $_ENV['XVHM_VHOST_CERT_DIR'];
-
-        if (! is_dir($vhostsCertDir)) {
-            mkdir($vhostsCertDir, 0755, true);
+        if (! is_dir($this->paths['vhostConfigDir'])) {
+            mkdir($this->paths['vhostConfigDir'], 0755, true);
         }
 
-        return realpath($vhostsCertDir);
-    }
-
-    private function prepareVhostCertKeyDir()
-    {
-        $vhostsCertKeyDir = $_ENV['XVHM_VHOST_CERT_KEY_DIR'];
-
-        if (! is_dir($vhostsCertKeyDir)) {
-            mkdir($vhostsCertKeyDir, 0755, true);
+        if (! is_dir($this->paths['vhostSSLConfigDir'])) {
+            mkdir($this->paths['vhostSSLConfigDir'], 0755, true);
         }
 
-        return realpath($vhostsCertKeyDir);
-    }
-
-    private function reduceApachePath($path, $directorySeparator = DS)
-    {
-        $apachePath = str_replace('/', DS, $this->paths['apacheDir']);
-        $path       = str_replace('/', DS, $path);
-
-        if (substr($path, 0, strlen($apachePath)) == $apachePath) {
-            $path = substr($path, strlen($apachePath . DS));
+        if (! is_dir($this->paths['vhostCertDir'])) {
+            mkdir($this->paths['vhostCertDir'], 0755, true);
         }
 
-        return str_replace(DS, $directorySeparator, $path);
-    }
-
-    private function normalizeHostName($hostName)
-    {
-        $hostName = trim($hostName);
-        $hostName = str_replace(' ', '', $hostName);
-        $hostName = str_replace('www.', '', $hostName);
-
-        return $hostName;
+        if (! is_dir($this->paths['vhostCertKeyDir'])) {
+            mkdir($this->paths['vhostCertKeyDir'], 0755, true);
+        }
     }
 
     private function normalizeDocumentRoot($documentRoot)
@@ -452,21 +514,41 @@ class Manager
         return $this->paths['xamppDir'] .DS. $documentRoot;
     }
 
+    private function normalizeHostName($hostName)
+    {
+        $hostName = trim($hostName);
+        $hostName = str_replace(' ', '', $hostName);
+
+        if (stripos($hostName, 'http://') === 0) {
+            $hostName = substr($hostName, 7);
+        }
+
+        if (stripos($hostName, 'https://') === 0) {
+            $hostName = substr($hostName, 8);
+        }
+
+        if (stripos($hostName, 'www.') === 0) {
+            $hostName = substr($hostName, 4);
+        }
+
+        return $hostName;
+    }
+
     private function tryGetHostName($hostName = null, $message = null)
     {
         $hostName = $this->normalizeHostName($hostName);
         $message  = $message ?: 'Enter virtual host name';
 
         $repeat = 0;
-        while (! $hostName) {
+        while (! $hostName || ! filter_var('http://' . $hostName, FILTER_VALIDATE_URL)) {
             if ($repeat == 4) {
-                Console::terminate('You have not provided enough information many times.');
+                Console::terminate('You have entered an incorrect format many times.', 1);
             }
 
             if ($repeat == 0) {
                 $hostName = Console::ask($message);
             } else {
-                Console::line('You have not provided enough information.');
+                Console::line('You have entered an incorrect format.');
                 $hostName = Console::ask($message . ' again');
             }
 
@@ -630,7 +712,7 @@ class Manager
         closedir($handle);
     }
 
-    private function loadSettings()
+    private function loadApacheSettings()
     {
         $xampp_settings = parse_ini_file($this->paths['xamppDir'] . '\xampp-control.ini', true);
 
@@ -646,16 +728,18 @@ class Manager
             $default_ssl_port = 443;
         }
 
-        $settings = new Setting;
-        $settings->set('Suggestions', 'HostPort', $default_port);
-        $settings->set('Suggestions', 'HostSSLPort', $default_ssl_port);
+        // $settingsContainer = new Setting;
+        // $settingsContainer->set('Suggestions', 'HostPort', $default_port);
+        // $settingsContainer->set('Suggestions', 'HostSSLPort', $default_ssl_port);
 
-        $this->settings = $settings;
+        // $this->setting = $settingsContainer;
+        $this->setting->set('Suggestions', 'HostPort', $default_port);
+        $this->setting->set('Suggestions', 'HostSSLPort', $default_ssl_port);
     }
 
     private function getSetting($sectionName, $settingName, $defaultValue = null)
     {
-        return $this->settings->get($sectionName, $settingName, $defaultValue);
+        return $this->setting->get($sectionName, $settingName, $defaultValue);
     }
 
     private function createDocumentRoot($dirPath)
@@ -667,11 +751,11 @@ class Manager
         mkdir($dirPath, 0755, true);
 
         if (is_dir($dirPath)) {
-            Console::line(str_repeat(' ', max(73 - strlen($message), 1)) . 'Successful');
+            Console::line('Successful', true, max(73 - strlen($message), 1));
             return true;
         }
 
-        Console::line(str_repeat(' ', max(77 - strlen($message), 1)) . 'Failed');
+        Console::line('Failed', true, max(77 - strlen($message), 1));
         return false;
     }
 
@@ -697,11 +781,11 @@ class Manager
         $content    = str_replace($search, $replace, file_get_contents($template));
 
         if (file_put_contents($configFile, $content)) {
-            Console::line(str_repeat(' ', max(73 - strlen($message), 1)) . 'Successful');
+            Console::line('Successful', true, max(73 - strlen($message), 1));
             return realpath($configFile);
         }
 
-        Console::line(str_repeat(' ', max(77 - strlen($message), 1)) . 'Failed');
+        Console::line('Failed', true, max(77 - strlen($message), 1));
         return null;
     }
 
@@ -731,11 +815,11 @@ class Manager
         $content    = str_replace($search, $replace, file_get_contents($template));
 
         if (file_put_contents($configFile, $content)) {
-            Console::line(str_repeat(' ', max(73 - strlen($message), 1)) . 'Successful');
+            Console::line('Successful', true, max(73 - strlen($message), 1));
             return realpath($configFile);
         }
 
-        Console::line(str_repeat(' ', max(77 - strlen($message), 1)) . 'Failed');
+        Console::line('Failed', true, max(77 - strlen($message), 1));
         return null;
     }
 
@@ -744,14 +828,14 @@ class Manager
         $message = 'Generating the cert and private key files...';
         Console::line($message, false);
 
-        exec('cscript //NoLogo "' . $this->paths['powerExecutor'] . '" -w -i "' . $this->paths['vhostCertGenerateScript'] . '" "' . $hostName . '"');
+        $this->powerExec('"' . $this->paths['vhostCertGenScript'] . '" "' . $hostName . '"', '-w -i -n');
 
         if (is_file($this->paths['vhostCertDir'] .DS. $hostName . '.cert') && is_file($this->paths['vhostCertKeyDir'] .DS. $hostName . '.key')) {
-            Console::line(str_repeat(' ', max(73 - strlen($message), 1)) . 'Successful');
+            Console::line('Successful', true, max(73 - strlen($message), 1));
             return true;
         }
 
-        Console::line(str_repeat(' ', max(77 - strlen($message), 1)) . 'Failed');
+        Console::line('Failed', true, max(77 - strlen($message), 1));
         return false;
     }
 
@@ -782,13 +866,13 @@ class Manager
                 $result = @file_put_contents($this->paths['winHostsFile'], $content, FILE_APPEND);
 
                 if (! $result) {
-                    Console::line(str_repeat(' ', max(77 - strlen($message), 1)) . 'Failed');
+                    Console::line('Failed', true, max(77 - strlen($message), 1));
                     return false;
                 }
             }
         }
 
-        Console::line(str_repeat(' ', max(73 - strlen($message), 1)) . 'Successful');
+        Console::line('Successful', true, max(73 - strlen($message), 1));
         return true;
     }
 
@@ -830,12 +914,12 @@ class Manager
             $updated = @file_put_contents($this->paths['winHostsFile'], $content);
 
             if (! $updated) {
-                Console::line(str_repeat(' ', max(77 - strlen($message), 1)) . 'Failed');
+                Console::line('Failed', true, max(73 - strlen($message), 1));
                 return false;
             }
         }
 
-        Console::line(str_repeat(' ', max(73 - strlen($message), 1)) . 'Successful');
+        Console::line('Successful', true, max(73 - strlen($message), 1));
         return true;
     }
 
@@ -846,9 +930,9 @@ class Manager
             $removed = @unlink($filePath);
 
             if ($removed) {
-                Console::line(str_repeat(' ', max(73 - strlen($message), 1)) . 'Successful');
+                Console::line('Successful', true, max(73 - strlen($message), 1));
             } else {
-                Console::line(str_repeat(' ', max(77 - strlen($message), 1)) . 'Failed');
+                Console::line('Failed', true, max(77 - strlen($message), 1));
             }
 
             return $removed;

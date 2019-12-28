@@ -1,17 +1,16 @@
 <?php
 
 require_once __DIR__.'/support/Manager.php';
-require_once __DIR__.'/support/Setting.php';
 require_once __DIR__.'/support/Installer.php';
 
 set_time_limit(0);
 
-if (! (array_key_exists('XVHM_APP_DIR', $_ENV)) || ! array_key_exists('XVHM_APP_STARTED', $_ENV) || $_ENV['XVHM_APP_STARTED'] != "true") {
+if (! getenv('XVHM_APP_DIR')) {
     echo PHP_EOL;
-    echo 'This script does not accept running as a standalone application.' , PHP_EOL;
+    echo 'This script does not accept running as a standalone application.' . PHP_EOL;
     echo 'Please run application from command "xvhosts"';
     echo PHP_EOL;
-    exit;
+    exit(1);
 }
 
 $banner = PHP_EOL
@@ -24,27 +23,13 @@ $banner = PHP_EOL
    . "###################################################################################" . PHP_EOL . PHP_EOL;
 
 if (isset($_SERVER['argv'][1])) {
-    if ($_SERVER['argv'][1] == 'getSetting') {
-        $settings = new Setting;
-
-        echo $settings->get($_SERVER['argv'][2], $_SERVER['argv'][3], $_SERVER['argv'][4]);
-        exit;
-    }
+    echo $banner;
 
     if ($_SERVER['argv'][1] == 'install') {
         $installer = new Installer;
-
-        if ($_SERVER['argv'][2] == 'start') {
-            echo $banner;
-            $installer->startInstall();
-            exit;
-        }
-
-        $installer->continueInstall();
+        $installer->install();
         exit;
     }
-
-    echo $banner;
 
     $manager = new Manager;
 
@@ -71,6 +56,18 @@ if (isset($_SERVER['argv'][1])) {
 
         case 'removeSSL':
             $manager->removeSSLOfHost($_SERVER['argv'][2]);
+            break;
+
+        case 'registerPath':
+            $manager->registerPath();
+            break;
+
+        case 'stopApache':
+            $manager->stopApache();
+            break;
+
+        case 'startApache':
+            $manager->startApache();
             break;
 
         case 'restartApache':
