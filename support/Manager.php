@@ -42,6 +42,7 @@ class Manager extends Application
             Console::breakline();
         }
 
+        Console::line($indentString . '- Url                   : ' . (($addedSSL) ? 'https://' : 'http://') . $hostInfo['serverName']);
         Console::line($indentString . '- Host port             : ' . $hostInfo['hostPort']);
         Console::line($indentString . '- Host name             : ' . $hostInfo['serverName']);
         Console::line($indentString . '- Host alias            : ' . $hostInfo['serverAlias']);
@@ -89,7 +90,7 @@ class Manager extends Application
 
             Console::breakline();
             Console::hrline();
-            Console::line($count . '. ' . $hostName);
+            Console::line($count . '. [' . $hostName . ']');
             Console::breakline();
             $this->showHostInfo($hostName, false);
 
@@ -828,9 +829,9 @@ class Manager extends Application
         $message = 'Generating the cert and private key files...';
         Console::line($message, false);
 
-        $this->powerExec('"' . $this->paths['vhostCertGenScript'] . '" "' . $hostName . '"', '-w -i -n');
+        $this->powerExec('"' . $this->paths['vhostCertGenScript'] . '" "' . $hostName . '"', '-w -i -n', $arrOutput, $exitCode);
 
-        if (is_file($this->paths['vhostCertDir'] .DS. $hostName . '.cert') && is_file($this->paths['vhostCertKeyDir'] .DS. $hostName . '.key')) {
+        if ($exitCode == 0 && is_file($this->paths['vhostCertDir'] .DS. $hostName . '.cert') && is_file($this->paths['vhostCertKeyDir'] .DS. $hostName . '.key')) {
             Console::line('Successful', true, max(73 - strlen($message), 1));
             return true;
         }

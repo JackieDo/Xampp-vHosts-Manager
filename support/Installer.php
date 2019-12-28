@@ -107,10 +107,10 @@ class Installer extends Application
         $message = 'Registering Trusted CA with name "' . getenv('XVHM_OPENSSL_SUBJECT_CN') . '"...';
         Console::line($message, false);
 
-        $this->powerExec('"' . $this->paths['caCertGenScript'] . '"', '-w -i -n');
+        $this->powerExec('"' . $this->paths['caCertGenScript'] . '"', '-w -i -n', $arrOutput, $exitCode);
 
-        if (is_file($this->paths['caCertDir'] . '\cacert.crt')) {
-            $this->powerExec('CERTUTIL -addstore -enterprise -f -v Root "' . $this->paths['caCertDir'] . '\cacert.crt"', '-w -e -i -n', $outputVal, $exitCode);
+        if ($exitCode == 0 && is_file($this->paths['caCertDir'] . '\cacert.crt')) {
+            $this->powerExec('CERTUTIL -addstore -enterprise -f -v Root "' . $this->paths['caCertDir'] . '\cacert.crt"', '-w -e -i -n', $arrOutput, $exitCode);
 
             if ($exitCode == 0) {
                 Console::line('Successful', true, max(73 - strlen($message), 1));
@@ -121,8 +121,9 @@ class Installer extends Application
         // If generating failed
         Console::line('Failed', true, max(77 - strlen($message), 1));
 
-        $files = glob($this->paths['caCertDir'] .DS. '*'); // get all file names
-        foreach ($files as $file) {
+        @unlink($this->paths['appDir'] . '\settings.ini');
+        $cacertGenFiles = glob($this->paths['caCertDir'] .DS. '*'); // get all file names
+        foreach ($cacertGenFiles as $file) {
             if (is_file($file)) {
                 @unlink($file);
             }
@@ -136,7 +137,7 @@ class Installer extends Application
         $message = 'Granting necessary permissions to Windows host file...';
         Console::line($message, false);
 
-        $this->powerExec('icacls "' . $this->paths['winHostsFile'] . '" /grant Users:MRXRW', '-w -i -e -n', $outputVal, $exitCode);
+        $this->powerExec('icacls "' . $this->paths['winHostsFile'] . '" /grant Users:MRXRW', '-w -i -e -n', $arrOutput, $exitCode);
 
         if ($exitCode == 0) {
             Console::line('Successful', true, max(73 - strlen($message), 1));
@@ -221,7 +222,7 @@ class Installer extends Application
         $message = 'Registering application\'s path into Windows Path Environment Variable...';
         Console::line($message, false);
 
-        $this->powerExec('cscript "' . $this->paths['pathRegister'] . '" "' .$this->paths['appDir']. '"', '-w -i -e -n', $outputVal, $exitCode);
+        $this->powerExec('cscript "' . $this->paths['pathRegister'] . '" "' .$this->paths['appDir']. '"', '-w -i -e -n', $arrOutput, $exitCode);
 
         if ($exitCode == 0) {
             Console::line('Successful', true, max(73 - strlen($message), 1));

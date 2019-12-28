@@ -133,6 +133,8 @@ class Application
                 $arguments = trim(strval($arguments));
             }
 
+            $outputValue = $returnCode = null;
+
             return exec('cscript //NoLogo "' . $this->paths['powerExecutor'] . '" ' . $arguments . ' ' . $command, $outputValue, $returnCode);
         }
 
