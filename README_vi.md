@@ -24,6 +24,7 @@ Vì thế, dự án này đã ra đời, nhằm tăng cường sức mạnh cho 
 * Liệt kê tất cả các tiên miền ảo hiện có.
 * Thêm chứng chỉ SSL cho một tên miền ảo.
 * Gỡ bỏ chứng chỉ SSL của tên miền ảo.
+* Thay đổi Document Root của một tên miền ảo.
 * Dừng dịch vụ Apache Httpd.
 * Chạy dịch vụ Apache Httpd.
 * Khởi động lại dịch vụ Apache Httpd.
@@ -44,6 +45,7 @@ Hãy tìm đọc một trong những chủ đề sau để tìm hiểu thêm v�
     - [Xóa bỏ một tên miền ảo](#xóa-bỏ-một-tên-miền-ảo)
     - [Thêm chứng chỉ SSL cho một tên miền ảo](#thêm-chứng-chỉ-ssl-cho-một-tên-miền-ảo)
     - [Gỡ bỏ chứng chỉ SSL của một tên miền ảo](#gỡ-bỏ-chứng-chỉ-ssl-của-một-tên-miền-ảo)
+    - [Thay đổi Document Root của một tên miền ảo](#thay-đổi-document-root-của-một-tên-miền-ảo)
     - [Dừng Apache Httpd](#dừng-apache-httpd)
     - [Chạy Apache Httpd](#chạy-apache-httpd)
     - [Khởi động lại Apache Httpd](#khởi-động-lại-apache-httpd)
@@ -162,6 +164,18 @@ $ xvhosts remove_ssl [HOST_NAME]
 Ví dụ:
 ```
 $ xvhosts remove_ssl demo.local
+```
+
+#### Thay đổi Document Root của một tên miền ảo
+
+Cú pháp:
+```
+$ xvhosts change_docroot [HOST_NAME]
+```
+
+Ví dụ:
+```
+$ xvhosts change_docroot demo.local
 ```
 
 #### Dừng Apache Httpd

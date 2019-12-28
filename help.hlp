@@ -7,12 +7,13 @@ Usage:
 Available commands:
     install           Intergrate Xampp vHosts Manager into Xampp
                       (require running in Administrator mode).
+    list              List all existing virtual hosts.
     new               Create a new virtual host.
     show              Display information of specific virtual host.
     remove            Remove specific virtual host.
     add_ssl           Add SSL certificate to specific virtual host.
     remove_ssl        Remove SSL certificate of specific virtual host.
-    list              List all existing virtual hosts.
+    change_docroot    Change Document Root of specific virtual host.
     stop_apache       Stop Apache httpd.
     start_apache      Start Apache httpd.
     restart_apache    Stop Apache httpd and start it again.

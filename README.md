@@ -24,6 +24,7 @@ Therefore, this project was born, in order to strengthen Xampp, helping users ta
 * List all existing virtual hosts.
 * Add SSL certificate to an existing virtual host.
 * Remove SSL certificate of an existing virtual host.
+* Change Document Root of an existing virtual host.
 * Stop Xampp Apache Httpd.
 * Start Xampp Apache Httpd.
 * Restart Xampp Apache Httpd.
@@ -44,6 +45,7 @@ Look at one of the following topics to learn more about Xampp vHosts Manager.
     - [Remove an existing virtual host](#remove-an-existing-virtual-host)
     - [Add SSL certificate to an existing virtual host](#add-ssl-certificate-to-an-existing-virtual-host)
     - [Remove SSL certificate of an existing virtual host](#remove-ssl-certificate-of-an-existing-virtual-host)
+    - [Change Document Root of an existing virtual host](#change-document-root-of-an-existing-virtual-host)
     - [Stop Apache Httpd](#stop-apache-httpd)
     - [Start Apache Httpd](#start-apache-httpd)
     - [Restart Apache Httpd](#restart-apache-httpd)
@@ -162,6 +164,18 @@ $ xvhosts remove_ssl [HOST_NAME]
 Example:
 ```
 $ xvhosts remove_ssl demo.local
+```
+
+#### Change Document Root of an existing virtual host
+
+Syntax:
+```
+$ xvhosts change_docroot [HOST_NAME]
+```
+
+Example:
+```
+$ xvhosts change_docroot demo.local
 ```
 
 #### Stop Apache Httpd

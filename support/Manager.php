@@ -327,8 +327,8 @@ class Manager extends Application
             Console::terminate('The host name you provided currently exists.');
         }
 
-        $defaultDocRoot = $this->getSetting('Suggestions', 'DocumentRoot', $this->paths['xamppDir'] . '\htdocs\{{host_name}}');
-        $documentRoot   = Console::ask('Enter the path to document root for this host', str_replace('{{host_name}}', $hostName, $defaultDocRoot));
+        $suggestDocRoot = $this->getSetting('Suggestions', 'DocumentRoot', $this->paths['xamppDir'] . '\htdocs\{{host_name}}');
+        $documentRoot   = Console::ask('Enter the path to document root for this host', str_replace('{{host_name}}', $hostName, $suggestDocRoot));
         $documentRoot   = $this->normalizeDocumentRoot($documentRoot);
 
         Console::breakline();
@@ -341,17 +341,12 @@ class Manager extends Application
         // Start adding
         Console::breakline();
         Console::hrline();
-        Console::line('Start add new virtual host "' . $hostName . '".');
+        Console::line('Start creating new virtual host "' . $hostName . '".');
         Console::breakline();
 
         if (! is_dir($documentRoot)) {
             // Create docuemnt root
-            $createdDocumentRoot = $this->createDocumentRoot($documentRoot);
-
-            if (! $createdDocumentRoot) {
-                Console::breakline();
-                Console::terminate('Error while creating document root.', 1);
-            }
+            $this->createDocumentRoot($documentRoot);
         }
 
         // Create vhost config file
@@ -375,7 +370,7 @@ class Manager extends Application
             // Start adding
             Console::breakline();
             Console::hrline();
-            Console::line('Start add SSL for virtual host "' . $hostName . '".');
+            Console::line('Start adding SSL for virtual host "' . $hostName . '".');
             Console::breakline();
 
             // Add SSL certificate for this host
@@ -396,6 +391,101 @@ class Manager extends Application
         if ($createMore) {
             Console::breakline();
             $this->newHost();
+        }
+
+        // Ask restart Apache
+        $this->askRestartApache();
+
+        Console::breakline();
+        Console::terminate('All jobs are completed.');
+    }
+
+    public function changeDocRoot($hostName = null)
+    {
+        $hostName = $this->tryGetHostName($hostName);
+
+        if (! $this->isExistHost($hostName)) {
+            Console::terminate('Sorry! Do not found any virtual host with name "' . $hostName . '".');
+        }
+
+        $hostInfo = $this->vhosts[$hostName];
+
+        Console::line('Current Document Root of this vhost is: ' . $hostInfo['documentRoot']);
+        Console::breakline();
+
+        $newDocRoot = Console::ask('Enter new path to document root for this host');
+        $newDocRoot = trim($newDocRoot);
+        Console::breakline();
+
+        if (empty($newDocRoot)) {
+            Console::terminate('Nothing to change.');
+        }
+
+        $newDocRoot = $this->normalizeDocumentRoot($newDocRoot);
+
+        if ($newDocRoot == $hostInfo['documentRoot']) {
+            Console::terminate('Nothing to change.');
+        }
+
+        Console::hrline();
+        Console::line('Start changing document root for virtual host "' . $hostName . '".');
+        Console::breakline();
+
+        if (! is_dir($newDocRoot)) {
+            $this->createDocumentRoot($newDocRoot, 'Creating new document root for virtual host...');
+        }
+
+        $message = 'Updating host config file...';
+        Console::line($message, false);
+
+        $vhostConfigContent    = @file_get_contents($hostInfo['vhostConfigFile']);
+        $replacePattern        = '/' . preg_quote(str_replace(DS, '/', $hostInfo['documentRoot']), '/') . '/';
+        $vhostConfigContent    = preg_replace($replacePattern, str_replace(DS, '/', $newDocRoot), $vhostConfigContent);
+        $vhostConfigFileUpdate = @file_put_contents($hostInfo['vhostConfigFile'], $vhostConfigContent);
+
+        if (! $vhostConfigFileUpdate) {
+            Console::line('Failed', true, max(77 - strlen($message), 1));
+            Console::breakline();
+            Console::terminate('Error while updating host config file.', 1);
+        }
+
+        Console::line('Successful', true, max(73 - strlen($message), 1));
+
+        if ($this->isSSLHost($hostInfo)) {
+            $message = 'Updating SSL config file...';
+            Console::line($message, false);
+
+            $sslConfigContent    = @file_get_contents($hostInfo['sslConfigFile']);
+            $replacePattern      = '/' . preg_quote(str_replace(DS, '/', $hostInfo['documentRoot']), '/') . '/';
+            $sslConfigContent    = preg_replace($replacePattern, str_replace(DS, '/', $newDocRoot), $sslConfigContent);
+            $sslConfigFileUpdate = @file_put_contents($hostInfo['sslConfigFile'], $sslConfigContent);
+
+            if (! $sslConfigFileUpdate) {
+                Console::line('Failed', true, max(77 - strlen($message), 1));
+                Console::breakline();
+                Console::terminate('Error while updating SSL config file.', 1);
+            }
+
+            Console::line('Successful', true, max(73 - strlen($message), 1));
+        }
+
+        // Update vhosts info
+        $this->vhosts[$hostName]['documentRoot'] = $newDocRoot;
+
+        // Show recent host info
+        Console::breakline();
+        Console::line('The following is information about the virtual host that just updated:');
+        Console::breakline();
+        $this->showHostInfo($hostName, false);
+
+        // Ask to change more
+        Console::breakline();
+        Console::hrline();
+        $changeMore = Console::confirm('Do you want to continue changing for another virtual host?');
+
+        if ($changeMore) {
+            Console::breakline();
+            $this->changeDocRoot();
         }
 
         // Ask restart Apache
@@ -743,9 +833,9 @@ class Manager extends Application
         return $this->setting->get($sectionName, $settingName, $defaultValue);
     }
 
-    private function createDocumentRoot($dirPath)
+    private function createDocumentRoot($dirPath, $message = null)
     {
-        $message = 'Creating document root for virtual host...';
+        $message = $message ?: 'Creating document root for virtual host...';
 
         Console::line($message, false);
 
@@ -757,7 +847,8 @@ class Manager extends Application
         }
 
         Console::line('Failed', true, max(77 - strlen($message), 1));
-        return false;
+        Console::breakline();
+        Console::terminate('Error while creating document root.', 1);
     }
 
     private function createHostConfigFile($hostName, $hostPort, $adminEmail, $documentRoot)

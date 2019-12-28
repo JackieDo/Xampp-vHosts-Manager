@@ -58,6 +58,10 @@ if (isset($_SERVER['argv'][1])) {
             $manager->removeSSLOfHost($_SERVER['argv'][2]);
             break;
 
+        case 'changeDocRoot':
+            $manager->changeDocRoot($_SERVER['argv'][2]);
+            break;
+
         case 'registerPath':
             $manager->registerPath();
             break;

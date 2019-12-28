@@ -100,6 +100,11 @@ php -n -d output_buffering=0 "%XVHM_PHP_CONTROLLER%" "removeSSL" "%~2"
 call :clearEnvVars
 exit /B %errorLevel%
 
+:changeDocRoot
+php -n -d output_buffering=0 "%XVHM_PHP_CONTROLLER%" "changeDocRoot" "%~2"
+call :clearEnvVars
+exit /B %errorLevel%
+
 :registerPath
 php -n -d output_buffering=0 "%XVHM_PHP_CONTROLLER%" "registerPath"
 call :clearEnvVars
@@ -131,6 +136,7 @@ if "%~1"=="list" goto listHosts
 if "%~1"=="remove" goto removeHost
 if "%~1"=="add_ssl" goto addSSL
 if "%~1"=="remove_ssl" goto removeSSL
+if "%~1"=="change_docroot" goto changeDocRoot
 if "%~1"=="register_path" goto registerPath
 if "%~1"=="stop_apache" goto stopApache
 if "%~1"=="start_apache" goto startApache
