@@ -1,5 +1,5 @@
 # Xampp vHosts Manager
-Hệ thống quản lý các tên miền ảo (cùng chứng chỉ SSL) cho Xampp trên nền hệ điều hành Windows
+Hệ thống quản lý các tên miền ảo và chứng chỉ SSL tự ký cho Xampp trên nền hệ điều hành Windows.
 
 Ngôn ngữ hướng dẫn >>> ( [Tiếng Anh](https://github.com/JackieDo/Xampp-vHosts-Manager/blob/master/README.md) | Tiếng Việt )
 

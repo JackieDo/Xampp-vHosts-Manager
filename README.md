@@ -1,5 +1,5 @@
 # Xampp vHosts Manager
-Virtual hosts (include SSL) management system (in console mode) for Xampp on Windows OS
+Virtual hosts and self-signed SSL certificates management system (in console mode) for Xampp on Windows OS.
 
 Documentation languages >>> ( English | [Vietnamese](https://github.com/JackieDo/Xampp-vHosts-Manager/blob/master/README_vi.md) )
 
