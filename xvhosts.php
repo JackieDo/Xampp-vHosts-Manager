@@ -14,13 +14,13 @@ if (! getenv('XVHM_APP_DIR')) {
 }
 
 $banner = PHP_EOL
-   . "###################################################################################" . PHP_EOL
-   . "#  Xampp vHosts Manager, virtual hosts management system for Xampp on Windows OS  #" . PHP_EOL
-   . "#---------------------------------------------------------------------------------#" . PHP_EOL
-   . "#  Author: Jackie Do <anhvudo@gmail.com>                                          #" . PHP_EOL
-   . "#---------------------------------------------------------------------------------#" . PHP_EOL
-   . "#  License: MIT (c) Jackie Do <anhvudo@gmail.com>                                 #" . PHP_EOL
-   . "###################################################################################" . PHP_EOL . PHP_EOL;
+    . "###################################################################################" . PHP_EOL
+    . "#  Xampp vHosts Manager, virtual hosts management system for Xampp on Windows OS  #" . PHP_EOL
+    . "#---------------------------------------------------------------------------------#" . PHP_EOL
+    . "#  Author: Jackie Do <anhvudo@gmail.com>                                          #" . PHP_EOL
+    . "#---------------------------------------------------------------------------------#" . PHP_EOL
+    . "#  License: MIT (c) Jackie Do <anhvudo@gmail.com>                                 #" . PHP_EOL
+    . "###################################################################################" . PHP_EOL . PHP_EOL;
 
 if (isset($_SERVER['argv'][1])) {
     echo $banner;
@@ -75,7 +75,7 @@ if (isset($_SERVER['argv'][1])) {
             break;
 
         case 'restartApache':
-            $manager->askRestartApache('Are you sure you want to restart Apache?');
+            $manager->restartApache();
             break;
 
         default:

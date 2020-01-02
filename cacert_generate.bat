@@ -2,7 +2,7 @@
 cls
 setlocal EnableExtensions
 
-:: Check necessary data
+rem Check necessary data ------------------------
 if "%XVHM_APP_DIR%"=="" goto missing
 if "%XVHM_TMP_DIR%"=="" goto missing
 if "%XVHM_CACERT_DIR%"=="" goto missing
@@ -12,18 +12,21 @@ if "%XVHM_OPENSSL_SUBJECT_O%"=="" goto missing
 if "%XVHM_OPENSSL_SUBJECT_OU%"=="" goto missing
 goto startGenerate
 
+rem ---------------------------------------------
 :missing
 echo.
 echo Missing environment variables or input parameters.
 echo Please run application from command "xvhosts"
 exit /B 1
 
+rem ---------------------------------------------
 :occuredError
 echo.
 echo The certificate generation process has been occurred error.
 echo Cancel the action.
 exit /B 1
 
+rem ---------------------------------------------
 :startGenerate
 if exist "%XVHM_TMP_DIR%" del /Q "%XVHM_TMP_DIR%\."
 if not exist "%XVHM_TMP_DIR%" mkdir "%XVHM_TMP_DIR%"

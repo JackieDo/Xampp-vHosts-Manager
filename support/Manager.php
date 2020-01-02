@@ -169,7 +169,7 @@ class Manager extends Application
         }
 
         // Ask restart Apache
-        $this->askRestartApache();
+        parent::restartApache();
 
         Console::breakline();
         Console::terminate('All jobs are completed.');
@@ -248,7 +248,7 @@ class Manager extends Application
             }
 
             // Ask restart Apache
-            $this->askRestartApache();
+            parent::restartApache();
 
             Console::breakline();
             Console::terminate('All jobs are completed.');
@@ -313,7 +313,7 @@ class Manager extends Application
         }
 
         // Ask restart Apache
-        $this->askRestartApache();
+        parent::restartApache();
 
         Console::breakline();
         Console::terminate('All jobs are completed.');
@@ -394,7 +394,7 @@ class Manager extends Application
         }
 
         // Ask restart Apache
-        $this->askRestartApache();
+        parent::restartApache();
 
         Console::breakline();
         Console::terminate('All jobs are completed.');
@@ -489,81 +489,42 @@ class Manager extends Application
         }
 
         // Ask restart Apache
-        $this->askRestartApache();
+        parent::restartApache();
 
         Console::breakline();
         Console::terminate('All jobs are completed.');
     }
 
-    public function askRestartApache($question = null)
+    public function registerPath($askConfirm = true, $question = null)
     {
-        $question = $question ?: 'Do you want to restart Apache?';
+        $question = 'Do you want to change the path of XVHM to "' . $this->paths['appDir'] . '"?';
         $confirm  = Console::confirm($question);
 
         if ($confirm) {
             Console::breakline();
+            $result = parent::registerPath(false);
 
-            $this->stopApache(false);
-            $this->startApache(false);
-        }
-    }
-
-    public function stopApache($askConfirm = true)
-    {
-        if ($askConfirm) {
-            $confirm = Console::confirm('Are you sure you want to stop Apache?');
-        } else {
-            $confirm = true;
-        }
-
-        if ($confirm) {
-            if ($askConfirm) {
-                Console::breakline();
-            }
-
-            Console::line('Stopping Apache Httpd...');
-            $this->powerExec('"' . $this->paths['xamppDir'] . '\apache_stop.bat"', '-w -i -n');
-        }
-    }
-
-    public function startApache($askConfirm = true)
-    {
-        if ($askConfirm) {
-            $confirm = Console::confirm('Are you sure you want to start Apache?');
-        } else {
-            $confirm = true;
-        }
-
-        if ($confirm) {
-            if ($askConfirm) {
-                Console::breakline();
-            }
-
-            Console::line('Starting Apache Httpd...');
-            $this->powerExec('"' . $this->paths['xamppDir'] . '\apache_start.bat"', '-i -n');
-        }
-    }
-
-    public function registerPath()
-    {
-        $question = 'Do you want to change the path of XVHM to "' . $this->paths['appDir'] . '"?';
-        $confirm = Console::confirm($question);
-
-        if ($confirm) {
-            $message = 'Registering new path into Windows Path Environment Variable...';
-            Console::breakline();
-            Console::line($message, false);
-
-            $this->powerExec('cscript "' . $this->paths['pathRegister'] . '" "' .$this->paths['appDir']. '"', '-w -i -e -n', $outputVal, $exitCode);
-
-            if ($exitCode == 0) {
-                Console::line('Successful', true, max(73 - strlen($message), 1));
+            if ($result) {
                 Console::terminate();
             }
 
-            Console::line('Failed', true, max(77 - strlen($message), 1));
             Console::terminate(null, 1);
         }
+    }
+
+    public function stopApache($askConfirm = true, $question = null)
+    {
+        parent::stopApache(true, 'Are you sure you want to stop Apache?');
+    }
+
+    public function startApache($askConfirm = true, $question = null)
+    {
+        parent::startApache(true, 'Are you sure you want to start Apache?');
+    }
+
+    public function restartApache($askConfirm = true, $question = null)
+    {
+        parent::restartApache(true, 'Are you sure you want to restart Apache?');
     }
 
     private function requireInstall()

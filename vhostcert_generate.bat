@@ -2,7 +2,7 @@
 cls
 setlocal EnableExtensions
 
-:: Check necessary data
+rem Check necessary data ------------------------
 if "%XVHM_APP_DIR%"=="" goto missing
 if "%XVHM_TMP_DIR%"=="" goto missing
 if "%XVHM_CACERT_DIR%"=="" goto missing
@@ -13,24 +13,28 @@ if "%XVHM_OPENSSL_BIN%"=="" goto missing
 if "%~1"=="" goto missing
 goto startGenerate
 
+rem ---------------------------------------------
 :missing
 echo.
 echo Missing environment variables or input parameters.
 echo Please run application from command "xvhosts"
 exit /B 1
 
+rem ---------------------------------------------
 :genReqError
 echo.
 echo The certificate request generation process has been occurred error.
 echo Cancel the action.
 exit /B 1
 
+rem ---------------------------------------------
 :authReqError
 echo.
 echo The authentication the request process to issue SSL certificate has been occurred error.
 echo Cancel the action.
 exit /B 1
 
+rem ---------------------------------------------
 :startGenerate
 set XVHM_HOSTNAME=%~1
 

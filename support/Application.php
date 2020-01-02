@@ -23,12 +23,83 @@ class Application
         }
     }
 
+    protected function stopApache($askConfirm = true, $question = null)
+    {
+        if ($askConfirm) {
+            $question = $question ?: 'Do you want to stop Apache?';
+            $confirm  = Console::confirm($question);
+        } else {
+            $confirm = true;
+        }
+
+        if ($confirm) {
+            Console::line('Stopping Apache Httpd...');
+            self::powerExec('"' . $this->paths['xamppDir'] . '\apache_stop.bat"', '-w -i -n');
+        }
+    }
+
+    protected function startApache($askConfirm = true, $question = null)
+    {
+        if ($askConfirm) {
+            $question = $question ?: 'Do you want to start Apache?';
+            $confirm  = Console::confirm($question);
+        } else {
+            $confirm = true;
+        }
+
+        if ($confirm) {
+            Console::line('Starting Apache Httpd...');
+            self::powerExec('"' . $this->paths['xamppDir'] . '\apache_start.bat"', '-i -n');
+        }
+    }
+
+    protected function restartApache($askConfirm = true, $question = null)
+    {
+        if ($askConfirm) {
+            $question = $question ?: 'Do you want to restart Apache?';
+            $confirm  = Console::confirm($question);
+        } else {
+            $confirm = true;
+        }
+
+        if ($confirm) {
+            Console::breakline();
+
+            self::stopApache(false);
+            self::startApache(false);
+        }
+    }
+
+    protected function registerPath($askConfirm = true, $question = null)
+    {
+        if ($askConfirm) {
+            $question = $question ?: 'Do you want to change the path of this app to "' . $this->paths['appDir'] . '"?';
+            $confirm  = Console::confirm($question);
+        } else {
+            $confirm = true;
+        }
+
+        if ($confirm) {
+            $message = 'Registering application\'s path into Windows Path Environment...';
+            Console::line($message, false);
+
+            self::powerExec('cscript "' . $this->paths['pathRegister'] . '" "' .$this->paths['appDir']. '"', '-w -i -e -n', $outputVal, $exitCode);
+
+            if ($exitCode == 0) {
+                Console::line('Successful', true, max(73 - strlen($message), 1));
+                return true;
+            }
+
+            Console::line('Failed', true, max(77 - strlen($message), 1));
+            return false;
+        }
+    }
+
     private function loadAppPaths()
     {
         $appDir = realpath(getenv('XVHM_APP_DIR'));
 
         $this->paths['appDir']                 = $appDir;
-        $this->paths['phpDir']                 = dirname(PHP_BINARY);
         $this->paths['tmpDir']                 = $appDir . '\tmp';
         $this->paths['caCertDir']              = $appDir . '\cacert';
         $this->paths['caCertGenScript']        = $appDir . '\cacert_generate.bat';
@@ -55,6 +126,7 @@ class Application
 
         $xamppDir  = realpath($this->setting->get('DirectoryPaths', 'Xampp'));
         $apacheDir = $this->setting->get('DirectoryPaths', 'Apache');
+        $phpDir    = $this->setting->get('DirectoryPaths', 'Php');
 
         if (! $xamppDir || ! is_file($xamppDir . '\xampp-control.exe')) {
             Console::breakline();
@@ -81,6 +153,21 @@ class Application
         }
 
         $this->paths['apacheDir'] = $apacheDir;
+
+        if (! $phpDir) {
+            $phpDir = $xamppDir . '\php';
+        }
+
+        if (! is_file($phpDir . '\php.exe')) {
+            Console::breakline();
+
+            $message = 'Cannot find PHP directory.' . PHP_EOL;
+            $message .= 'Please check the configuration path to the PHP directory in file "' . $this->paths['appDir'] . '\settings.ini".';
+
+            Console::terminate($message, 1);
+        }
+
+        $this->paths['phpDir'] = $phpDir;
 
         return $this->loadAdditionalPaths();
     }
@@ -122,7 +209,7 @@ class Application
         return str_replace(DS, $directorySeparator, $path);
     }
 
-    protected function powerExec($command, $arguments = null, &$outputValue = null, &$returnCode = null)
+    protected function powerExec($command, $arguments = null, &$outputArray = null, &$statusCode = null)
     {
         if (is_file($this->paths['powerExecutor'])) {
             if (is_array($arguments)) {
@@ -133,14 +220,14 @@ class Application
                 $arguments = trim(strval($arguments));
             }
 
-            $outputValue = $returnCode = null;
+            $outputArray = $statusCode = null;
 
-            return exec('cscript //NoLogo "' . $this->paths['powerExecutor'] . '" ' . $arguments . ' ' . $command, $outputValue, $returnCode);
+            return exec('cscript //NoLogo "' . $this->paths['powerExecutor'] . '" ' . $arguments . ' ' . $command, $outputArray, $statusCode);
         }
 
         $message     = 'Cannot find the "' . $this->paths['powerExecutor'] . '" implementer.';
-        $outputValue = array($message);
-        $returnCode  = 1;
+        $outputArray = array($message);
+        $statusCode  = 1;
 
         return $message;
     }

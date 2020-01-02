@@ -66,7 +66,7 @@ class Installer extends Application
 
     private function askInstallConfig()
     {
-        $phpDir = $this->paths['phpDir'];
+        $phpDir = dirname(PHP_BINARY);
 
         Console::line('First, provide the path to your Xampp directory for Xampp vHosts Manager.');
 
@@ -217,23 +217,15 @@ class Installer extends Application
         return false;
     }
 
-    private function registerPath()
+    protected function registerPath($askConfirm = true, $question = null)
     {
-        $message = 'Registering application\'s path into Windows Path Environment Variable...';
-        Console::line($message, false);
+        $result = parent::registerPath(false);
 
-        $this->powerExec('cscript "' . $this->paths['pathRegister'] . '" "' .$this->paths['appDir']. '"', '-w -i -e -n', $arrOutput, $exitCode);
-
-        if ($exitCode == 0) {
-            Console::line('Successful', true, max(73 - strlen($message), 1));
-            return true;
-        } else {
-            Console::line('Failed', true, max(77 - strlen($message), 1));
+        if (! $result) {
             Console::breakline();
             Console::line('Don\'t worry. This does not affect the installation process.');
             Console::line('You can register the path manually...');
             Console::line('or use the "xvhosts register_path" command after installation.');
-            return false;
         }
     }
 
