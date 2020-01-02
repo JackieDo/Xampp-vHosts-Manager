@@ -8,7 +8,7 @@ set_time_limit(0);
 if (! getenv('XVHM_APP_DIR')) {
     echo PHP_EOL;
     echo 'This script does not accept running as a standalone application.' . PHP_EOL;
-    echo 'Please run application from command "xvhosts"';
+    echo 'Please run application from command "xvhost"';
     echo PHP_EOL;
     exit(1);
 }

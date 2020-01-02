@@ -12,7 +12,7 @@ set XVHM_APP_DIR=%~dp0
 if not "%XVHM_APP_DIR:~-2%"==":\" set XVHM_APP_DIR=%XVHM_APP_DIR:~0,-1%
 
 set XVHM_POWER_EXECUTOR=%XVHM_APP_DIR%\support\PowerExec.vbs
-set XVHM_PHP_CONTROLLER=%XVHM_APP_DIR%\xvhosts.php
+set XVHM_PHP_CONTROLLER=%XVHM_APP_DIR%\xvhost.php
 goto startCommand
 
 rem ---------------------------------------------
@@ -75,7 +75,7 @@ exit
 
 rem ---------------------------------------------
 :help
-type "%XVHM_APP_DIR%\help.hlp"
+type "%XVHM_APP_DIR%\xvhost.hlp"
 call :clearEnvVars
 exit /B
 
@@ -165,7 +165,7 @@ if "%~1"=="restart_apache" goto restartApache
 
 rem Call command with unknown param -------------
 echo.
-echo Xampp vHosts Manager error: "%~1" is invalid xvhosts command.
+echo Xampp vHosts Manager error: "%~1" is invalid xvhost command.
 echo.
 goto help
 

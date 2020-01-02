@@ -225,7 +225,7 @@ class Installer extends Application
             Console::breakline();
             Console::line('Don\'t worry. This does not affect the installation process.');
             Console::line('You can register the path manually...');
-            Console::line('or use the "xvhosts register_path" command after installation.');
+            Console::line('or use the "xvhost register_path" command after installation.');
         }
     }
 

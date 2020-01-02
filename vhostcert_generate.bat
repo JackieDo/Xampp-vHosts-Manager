@@ -17,7 +17,7 @@ rem ---------------------------------------------
 :missing
 echo.
 echo Missing environment variables or input parameters.
-echo Please run application from command "xvhosts"
+echo Please run application from command "xvhost"
 exit /B 1
 
 rem ---------------------------------------------

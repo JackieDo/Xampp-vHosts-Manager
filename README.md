@@ -82,31 +82,31 @@ $ composer create-project jackiedo/xampp-vhosts-manager xvhm "1.*"
 * Extract the archive to a shared location `(example: D:\xvhm)`. Note: Should not place in `C:\Program Files` or anywhere else that would require Administrator access for modifying configuration files.
 * Open a terminal in Administrator mode `(run as Administrator)`.
 * Navigate to the directory you have placed Xampp vHosts Manager `(example: cd /D D:\xvhm)`.
-* Execute the command `xvhosts install` and follow the required steps.
+* Execute the command `xvhost install` and follow the required steps.
 * Exit terminal (to remove temporary environment variables).
 
 > Note: See [here](https://www.howtogeek.com/194041/how-to-open-the-command-prompt-as-administrator-in-windows-8.1/) to know how to to open the command prompt as Administrator.
 
 ## Usage
-Because of a path to the Xampp vHosts Manager application directory has been added to the Windows Path Environment Variables during the installation process, now you can just open the terminal `(no need to open in Administrator mode anymore)` anywhere and excute one of the following `xvhosts` commands:
+Because of a path to the Xampp vHosts Manager application directory has been added to the Windows Path Environment Variables during the installation process, now you can just open the terminal `(no need to open in Administrator mode anymore)` anywhere and excute one of the following `xvhost` commands:
 
 #### Display the help message
 
 Syntax:
 ```
-$ xvhosts help
+$ xvhost help
 ```
 
 #### Create new virtual host
 
 Syntax:
 ```
-$ xvhosts new [HOST_NAME]
+$ xvhost new [HOST_NAME]
 ```
 
 Example:
 ```
-$ xvhosts new demo.local
+$ xvhost new demo.local
 ```
 
 > Note: The HOST_NAME parameter is optional. If you do not pass it to the command statement, you will also be asked to enter this information later.
@@ -115,88 +115,88 @@ $ xvhosts new demo.local
 
 Syntax:
 ```
-$ xvhosts show [HOST_NAME]
+$ xvhost show [HOST_NAME]
 ```
 
 Example:
 ```
-$ xvhosts show demo.local
+$ xvhost show demo.local
 ```
 
 #### List all existing virtual hosts
 
 Syntax:
 ```
-$ xvhosts list
+$ xvhost list
 ```
 
 #### Remove an existing virtual host
 
 Syntax:
 ```
-$ xvhosts remove [HOST_NAME]
+$ xvhost remove [HOST_NAME]
 ```
 
 Example:
 ```
-$ xvhosts remove demo.local
+$ xvhost remove demo.local
 ```
 
 #### Add SSL certificate to an existing virtual host
 
 Syntax:
 ```
-$ xvhosts add_ssl [HOST_NAME]
+$ xvhost add_ssl [HOST_NAME]
 ```
 
 Example:
 ```
-$ xvhosts add_ssl demo.local
+$ xvhost add_ssl demo.local
 ```
 
 #### Remove SSL certificate of an existing virtual host
 
 Syntax:
 ```
-$ xvhosts remove_ssl [HOST_NAME]
+$ xvhost remove_ssl [HOST_NAME]
 ```
 
 Example:
 ```
-$ xvhosts remove_ssl demo.local
+$ xvhost remove_ssl demo.local
 ```
 
 #### Change Document Root of an existing virtual host
 
 Syntax:
 ```
-$ xvhosts change_docroot [HOST_NAME]
+$ xvhost change_docroot [HOST_NAME]
 ```
 
 Example:
 ```
-$ xvhosts change_docroot demo.local
+$ xvhost change_docroot demo.local
 ```
 
 #### Stop Apache Httpd
 
 Syntax:
 ```
-$ xvhosts stop_apache
+$ xvhost stop_apache
 ```
 
 #### Start Apache Httpd
 
 Syntax:
 ```
-$ xvhosts start_apache
+$ xvhost start_apache
 ```
 
 #### Restart Apache Httpd
 
 Syntax:
 ```
-$ xvhosts restart_apache
+$ xvhost restart_apache
 ```
 
 #### Register path of application
@@ -206,7 +206,7 @@ To do this, after you have changed the directory, navigate to the new location o
 
 Syntax:
 ```
-$ xvhosts register_path
+$ xvhost register_path
 ```
 
 > Note: You need to accept this process to be performed with Administrator permission.

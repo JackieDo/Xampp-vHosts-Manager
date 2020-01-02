@@ -19,7 +19,7 @@
     },
     "scripts": {
         "post-create-project-cmd": [
-            "xvhosts.bat install"
+            "xvhost.bat install"
         ]
     },
     "config": {

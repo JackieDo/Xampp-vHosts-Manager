@@ -531,7 +531,7 @@ class Manager extends Application
     {
         Console::breakline();
         Console::line('Xampp vHosts Manager has not been integrated into Xampp.');
-        Console::line('Run command "xvhosts install" in Administartor mode to integrate it.');
+        Console::line('Run command "xvhost install" in Administartor mode to integrate it.');
         Console::terminate(null, 1);
     }
 

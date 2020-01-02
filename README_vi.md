@@ -82,31 +82,31 @@ $ composer create-project jackiedo/xampp-vhosts-manager xvhm "1.*"
 * Giải nén bản cài đặt vào một nơi nào đó `(ví dụ: D:\xvhm)`. Lưu ý: Không nên đặt trong `C:\Program Files` hoặc bất cứ nơi nào đỏi hỏi quyền Administrator khi ta chỉnh sửa tập tin cấu hình về sau.
 * Mở dấu nhắc lệnh trong chế độ Administrator `(run as Administrator)`.
 * Điều hướng đến thư mục XVHM bạn đã giải nén `(ví dụ: cd /D D:\xvhm)`.
-* Thực thi lệnh `xvhosts install` và làm theo từng bước yêu cầu.
+* Thực thi lệnh `xvhost install` và làm theo từng bước yêu cầu.
 * Đóng dấu nhắc lệnh (mục đích để xóa các biến tạm).
 
 > Lưu ý: Xem [tại đây](https://www.howtogeek.com/194041/how-to-open-the-command-prompt-as-administrator-in-windows-8.1/) để biết cách mở dấu nhắc lệnh với quyền Administrator.
 
 ## Sử dụng
-Do đường dẫn đến thư mục ứng dụng XVHM đã được thêm vào biến môi trường đường dẫn trong quá trình cài đặt, bây giờ bạn chỉ cần mở dấu nhắc lệnh `(không cần thiết mở với quyền Administrator nữa)` ở bất cứ nơi đâu và thực hiện một trong các lệnh `xvhosts` sau:
+Do đường dẫn đến thư mục ứng dụng XVHM đã được thêm vào biến môi trường đường dẫn trong quá trình cài đặt, bây giờ bạn chỉ cần mở dấu nhắc lệnh `(không cần thiết mở với quyền Administrator nữa)` ở bất cứ nơi đâu và thực hiện một trong các lệnh `xvhost` sau:
 
 #### Hiển thị trợ giúp
 
 Cú pháp:
 ```
-$ xvhosts help
+$ xvhost help
 ```
 
 #### Tạo tên miền ảo mới
 
 Cú pháp:
 ```
-$ xvhosts new [HOST_NAME]
+$ xvhost new [HOST_NAME]
 ```
 
 Ví dụ:
 ```
-$ xvhosts new demo.local
+$ xvhost new demo.local
 ```
 
 > Lưu ý: Tham số HOST_NAME là tùy chọn. Nếu bạn không truyền nó vào câu lệnh lệnh, bạn cũng sẽ được yêu cầu nhập thông tin này sau đó.
@@ -115,88 +115,88 @@ $ xvhosts new demo.local
 
 Cú pháp:
 ```
-$ xvhosts show [HOST_NAME]
+$ xvhost show [HOST_NAME]
 ```
 
 Ví dụ:
 ```
-$ xvhosts show demo.local
+$ xvhost show demo.local
 ```
 
 #### Liệt kê tất cả các tên miền ảo hiện đang có
 
 Cú pháp:
 ```
-$ xvhosts list
+$ xvhost list
 ```
 
 #### Xóa bỏ một tên miền ảo
 
 Cú pháp:
 ```
-$ xvhosts remove [HOST_NAME]
+$ xvhost remove [HOST_NAME]
 ```
 
 Ví dụ:
 ```
-$ xvhosts remove demo.local
+$ xvhost remove demo.local
 ```
 
 #### Thêm chứng chỉ SSL cho một tên miền ảo
 
 Cú pháp:
 ```
-$ xvhosts add_ssl [HOST_NAME]
+$ xvhost add_ssl [HOST_NAME]
 ```
 
 Ví dụ:
 ```
-$ xvhosts add_ssl demo.local
+$ xvhost add_ssl demo.local
 ```
 
 #### Gỡ bỏ chứng chỉ SSL của một tên miền ảo
 
 Cú pháp:
 ```
-$ xvhosts remove_ssl [HOST_NAME]
+$ xvhost remove_ssl [HOST_NAME]
 ```
 
 Ví dụ:
 ```
-$ xvhosts remove_ssl demo.local
+$ xvhost remove_ssl demo.local
 ```
 
 #### Thay đổi Document Root của một tên miền ảo
 
 Cú pháp:
 ```
-$ xvhosts change_docroot [HOST_NAME]
+$ xvhost change_docroot [HOST_NAME]
 ```
 
 Ví dụ:
 ```
-$ xvhosts change_docroot demo.local
+$ xvhost change_docroot demo.local
 ```
 
 #### Dừng Apache Httpd
 
 Cú pháp:
 ```
-$ xvhosts stop_apache
+$ xvhost stop_apache
 ```
 
 #### Chạy Apache Httpd
 
 Cú pháp:
 ```
-$ xvhosts start_apache
+$ xvhost start_apache
 ```
 
 #### Khởi động lại Apache Httpd
 
 Cú pháp:
 ```
-$ xvhosts restart_apache
+$ xvhost restart_apache
 ```
 
 #### Đăng ký đường dẫn của ứng dụng
@@ -206,7 +206,7 @@ Tính năng này cho phép bạn đăng ký đường dẫn đến thư mục �
 
 Cú pháp:
 ```
-$ xvhosts register_path
+$ xvhost register_path
 ```
 
 > Lưu ý: Bạn cần cho phép quy trình này được thực thi với quyền Administrator.
