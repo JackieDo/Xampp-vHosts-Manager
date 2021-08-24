@@ -43,8 +43,8 @@ Private Sub ShowHelp()
         vbNewLine & "Notes:" & _
         vbNewLine & "  - The [-k] parameter will not work if the application will be executed" & _
         vbNewLine & "    actively closing the window." & _
-        vbNewLine & "  - Cannot use the [-m] and [-a] parameters at the same time." & _
-        vbNewLine & "  - Using the parameter [-i] will omit the parameters [-m] and [-a]." & _
+        vbNewLine & "  - Cannot use the [-m] and [-x] parameters at the same time." & _
+        vbNewLine & "  - Using the parameter [-i] will omit the parameters [-m] and [-x]." & _
         vbNewLine & "  - Using the [-w] and [-i] parameters together requires the assurance of" & _
         vbNewLine & "    completion of the application will be executed. Be careful when using." & _
         vbNewLine
@@ -123,14 +123,14 @@ Private Function ParseArguments(ByVal arguments)
                     objParams("Elevated") = true
                 Case "m"
                     If (Not objParams("WindowSize") = "Normal") Then
-                        ShowHelpWithMessage scriptBaseName & " error: Cannot use the [-m] and [-a] parameters at the same time. Cancel the operation.", "error"
+                        ShowHelpWithMessage scriptBaseName & " error: Cannot use the [-m] and [-x] parameters at the same time. Cancel the operation.", "error"
                         Quit 1
                     End If
 
                     objParams("WindowSize") = "Minimized"
                 Case "x"
                     If (Not objParams("WindowSize") = "Normal") Then
-                        ShowHelpWithMessage scriptBaseName & " error: Cannot use the [-m] and [-a] parameters at the same time. Cancel the operation.", "error"
+                        ShowHelpWithMessage scriptBaseName & " error: Cannot use the [-m] and [-x] parameters at the same time. Cancel the operation.", "error"
                         Quit 1
                     End If
 

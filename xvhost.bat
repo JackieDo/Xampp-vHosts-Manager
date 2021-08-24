@@ -2,30 +2,28 @@
 title Xampp vHosts Manager
 setlocal EnableExtensions EnableDelayedExpansion
 
+cd /D %~dp0
+
 rem ---------------------------------------------
 for /F "tokens=* USEBACKQ" %%v in (`where php`) do (
     if not exist "%%v" goto phpBinNotFound
 )
 
-rem ---------------------------------------------
 set XVHM_APP_DIR=%~dp0
 if not "%XVHM_APP_DIR:~-2%"==":\" set XVHM_APP_DIR=%XVHM_APP_DIR:~0,-1%
 
-set XVHM_POWER_EXECUTOR=%XVHM_APP_DIR%\support\PowerExec.vbs
-set XVHM_PHP_CONTROLLER=%XVHM_APP_DIR%\xvhost.php
-goto startCommand
+set XVHM_SRC_DIR=%XVHM_APP_DIR%\src
+set XVHM_TMP_DIR=%XVHM_APP_DIR%\tmp
+set XVHM_PHP_CONTROLLER=%XVHM_SRC_DIR%\xvhost.php
+set XVHM_POWER_EXECUTOR=%XVHM_SRC_DIR%\Tools\power_exec.vbs
 
-rem ---------------------------------------------
-:clearEnvVars
-set XVHM_APP_DIR=
-set XVHM_POWER_EXECUTOR=
-set XVHM_PHP_CONTROLLER=
-exit /B
+if not exist "%XVHM_TMP_DIR%" mkdir "%XVHM_TMP_DIR%"
+goto startCommand
 
 rem ---------------------------------------------
 :phpBinNotFound
 echo.
-echo Cannot find PHP cli.
+echo Cannot find PHP CLI.
 echo Make sure you have add the path to your PHP directory into Windows Path Environment Variable.
 call :clearEnvVars
 exit /B 1
@@ -50,6 +48,12 @@ call :clearEnvVars
 exit /B 1
 
 rem ---------------------------------------------
+:help
+type "%XVHM_APP_DIR%\xvhost.hlp"
+call :clearEnvVars
+exit /B
+
+rem ---------------------------------------------
 :install
 FSUTIL dirty query %SystemDrive%>nul
 if %errorLevel% NEQ 0 (
@@ -67,17 +71,17 @@ if %errorLevel% NEQ 0 (
     )
 )
 php -n -d output_buffering=0 "%XVHM_PHP_CONTROLLER%" "install"
-if errorLevel 1 goto installationFailed
+if %errorLevel% EQU 1 goto installationFailed
+if %errorLevel% EQU 2 (
+    echo.
+    pause>nul|set/p =Press any key to exit terminal...
+    call :clearEnvVars
+    exit /B 2
+)
 echo.
 pause>nul|set/p =Press any key to exit terminal...
 call :clearEnvVars
 exit
-
-rem ---------------------------------------------
-:help
-type "%XVHM_APP_DIR%\xvhost.hlp"
-call :clearEnvVars
-exit /B
 
 rem ---------------------------------------------
 :newHost
@@ -128,6 +132,12 @@ call :clearEnvVars
 exit /B %errorLevel%
 
 rem ---------------------------------------------
+:grantPermsWinHosts
+php -n -d output_buffering=0 "%XVHM_PHP_CONTROLLER%" "grantPermsWinHosts"
+call :clearEnvVars
+exit /B %errorLevel%
+
+rem ---------------------------------------------
 :stopApache
 php -n -d output_buffering=0 "%XVHM_PHP_CONTROLLER%" "stopApache"
 call :clearEnvVars
@@ -146,6 +156,15 @@ call :clearEnvVars
 exit /B %errorLevel%
 
 rem ---------------------------------------------
+:clearEnvVars
+set XVHM_APP_DIR=
+set XVHM_SRC_DIR=
+set XVHM_TMP_DIR=
+set XVHM_PHP_CONTROLLER=
+set XVHM_POWER_EXECUTOR=
+exit /B
+
+rem ---------------------------------------------
 :startCommand
 cls
 if "%~1"=="" goto missingArgs
@@ -159,6 +178,7 @@ if "%~1"=="add_ssl" goto addSSL
 if "%~1"=="remove_ssl" goto removeSSL
 if "%~1"=="change_docroot" goto changeDocRoot
 if "%~1"=="register_path" goto registerPath
+if "%~1"=="grantperms_winhosts" goto grantPermsWinHosts
 if "%~1"=="stop_apache" goto stopApache
 if "%~1"=="start_apache" goto startApache
 if "%~1"=="restart_apache" goto restartApache

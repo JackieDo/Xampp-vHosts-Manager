@@ -32,30 +32,37 @@ Therefore, this project was born, in order to strengthen Xampp, helping users ta
 # Overview
 Look at one of the following topics to learn more about Xampp vHosts Manager.
 
-* [Compatibility](#compatibility)
-* [Requirement](#requirement)
-* [Installation](#installation)
-    - [Via Composer Create-Project](#via-composer-create-project)
-    - [Via Manual Download](#via-manual-download)
-* [Usage](#usage)
-    - [Display the help message](#display-the-help-message)
-    - [Create new virtual host](#create-new-virtual-host)
-    - [Display information of an existing virtual host](#display-information-of-an-existing-virtual-host)
-    - [List all existing virtual hosts](#list-all-existing-virtual-hosts)
-    - [Remove an existing virtual host](#remove-an-existing-virtual-host)
-    - [Add SSL certificate to an existing virtual host](#add-ssl-certificate-to-an-existing-virtual-host)
-    - [Remove SSL certificate of an existing virtual host](#remove-ssl-certificate-of-an-existing-virtual-host)
-    - [Change Document Root of an existing virtual host](#change-document-root-of-an-existing-virtual-host)
-    - [Stop Apache Httpd](#stop-apache-httpd)
-    - [Start Apache Httpd](#start-apache-httpd)
-    - [Restart Apache Httpd](#restart-apache-httpd)
-    - [Register path of application](#register-path-of-application)
-* [Configuration](#configuration)
-* [License](#license)
-* [Thanks from author](#thanks-for-use)
+- [Xampp vHosts Manager](#xampp-vhosts-manager)
+- [Features of this project](#features-of-this-project)
+- [Overview](#overview)
+  - [Compatibility](#compatibility)
+  - [Requirement](#requirement)
+  - [Installation](#installation)
+      - [Via Composer Create-Project](#via-composer-create-project)
+      - [Via Manual Download](#via-manual-download)
+  - [Updation](#updation)
+  - [Usage](#usage)
+      - [Display the help message](#display-the-help-message)
+      - [Create new virtual host](#create-new-virtual-host)
+      - [Display information of an existing virtual host](#display-information-of-an-existing-virtual-host)
+      - [List all existing virtual hosts](#list-all-existing-virtual-hosts)
+      - [Remove an existing virtual host](#remove-an-existing-virtual-host)
+      - [Add SSL certificate to an existing virtual host](#add-ssl-certificate-to-an-existing-virtual-host)
+      - [Remove SSL certificate of an existing virtual host](#remove-ssl-certificate-of-an-existing-virtual-host)
+      - [Change Document Root of an existing virtual host](#change-document-root-of-an-existing-virtual-host)
+      - [Stop Apache Httpd](#stop-apache-httpd)
+      - [Start Apache Httpd](#start-apache-httpd)
+      - [Restart Apache Httpd](#restart-apache-httpd)
+      - [Register path of application](#register-path-of-application)
+      - [Grant necessary permissions to Windows hosts file](#grant-necessary-permissions-to-windows-hosts-file)
+  - [Configuration](#configuration)
+  - [License](#license)
+  - [Thanks for use](#thanks-for-use)
 
 ## Compatibility
-Xampp vHosts Manager is compatible with all Xampp versions using PHP 5.4 or higher.
+
+* Xampp vHosts Manager is compatible with all Xampp versions using PHP 5.4 or higher.
+* Currently, this project does not yet support the portable Xampp version.
 
 ## Requirement
 Xampp vHosts Manager takes full advantage of what's included in Xampp, nothing more needed. So, you just need following things:
@@ -78,7 +85,7 @@ $ composer create-project jackiedo/xampp-vhosts-manager xvhm "1.*"
 ```
 
 #### Via Manual Download
-* Download the [latest release](https://github.com/JackieDo/Xampp-vHosts-Manager/releases/latest)
+* Download the [latest release version](https://github.com/JackieDo/Xampp-vHosts-Manager/releases/latest)
 * Extract the archive to a shared location `(example: D:\xvhm)`. Note: Should not place in `C:\Program Files` or anywhere else that would require Administrator access for modifying configuration files.
 * Open a terminal in Administrator mode `(run as Administrator)`.
 * Navigate to the directory you have placed Xampp vHosts Manager `(example: cd /D D:\xvhm)`.
@@ -86,6 +93,14 @@ $ composer create-project jackiedo/xampp-vhosts-manager xvhm "1.*"
 * Exit terminal (to remove temporary environment variables).
 
 > Note: See [here](https://www.howtogeek.com/194041/how-to-open-the-command-prompt-as-administrator-in-windows-8.1/) to know how to to open the command prompt as Administrator.
+
+## Updation
+Currently, Xampp vHosts Manager does not have an automatic update mechanism, we have to do it manually step by step as follows:
+
+* Backup the `settings.ini` file and the `cacert` folder in your Xampp vHosts Manager's directory to somewhere else.
+* Remove all files and sub-folders in Xampp vHosts Manager application directory.
+* Download the [latest release version](https://github.com/JackieDo/Xampp-vHosts-Manager/releases/latest) and extract it into Xampp vHosts Manager application directory.
+* Copy the previously backed up `settings.ini` file and `cacert` folder into the Xampp vHosts Manager application directory back.
 
 ## Usage
 Because of a path to the Xampp vHosts Manager application directory has been added to the Windows Path Environment Variables during the installation process, now you can just open the terminal `(no need to open in Administrator mode anymore)` anywhere and excute one of the following `xvhost` commands:
@@ -211,6 +226,16 @@ $ xvhost register_path
 
 > Note: You need to accept this process to be performed with Administrator permission.
 
+#### Grant necessary permissions to Windows hosts file
+This feature will grant `Modify`, `Read & execute`, `Read`, `Write` permissions to the `Windows hosts` file for the `Users` account. This makes it possible for Xampp vHosts Manager to add the host name to the `Windows hosts` file every time you create a virtual host.
+
+Syntax:
+```
+$ xvhost grantperms_winhosts
+```
+
+> Note: You need to accept this process to be performed with Administrator permission.
+
 ## Configuration
 All onfiguration are put in an ini file with name `settings.ini` located in Xampp vHosts Manager application directory. The structure of this file looks like this:
 
@@ -241,7 +266,7 @@ AdminEmail = "anhvudo@gmail.com"
 
 [ListViewMode]
 ;The number of records will be displayed on each page when listing the existing virtual hosts.
-RecordPerPage = "2"
+RecordPerPage = "3"
 
 ```
 

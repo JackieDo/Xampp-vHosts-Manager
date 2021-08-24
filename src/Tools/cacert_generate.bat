@@ -32,18 +32,6 @@ if exist "%XVHM_TMP_DIR%" del /Q "%XVHM_TMP_DIR%\."
 if not exist "%XVHM_TMP_DIR%" mkdir "%XVHM_TMP_DIR%"
 if not exist "%XVHM_CACERT_DIR%" mkdir "%XVHM_CACERT_DIR%"
 
-if exist "%XVHM_CACERT_DIR%\cacert.crt" (
-    if exist "%XVHM_CACERT_DIR%\cacert.name" (
-        for /F "tokens=* USEBACKQ" %%v in ("%XVHM_CACERT_DIR%\cacert.name") do (
-            if "%XVHM_OPENSSL_SUBJECT_CN%"=="%%v" (
-                echo.
-                echo The CA certificate bundle exists. Skip the new generation.
-                exit /B
-            )
-        )
-    )
-)
-
 echo.
 echo ----------------------------------------
 echo Start generate new CA certificate bundle
@@ -54,15 +42,11 @@ set pemFile=%XVHM_TMP_DIR%\cacert.pem
 set keyPemFile=%XVHM_TMP_DIR%\cacert.key.pem
 set crtFile=%XVHM_TMP_DIR%\cacert.crt
 set keyFile=%XVHM_TMP_DIR%\cacert.key
-set nameFile=%XVHM_TMP_DIR%\cacert.name
 
 set OPENSSL_CONF=%XVHM_CACERT_GENERATE_CONFIG%
 %XVHM_OPENSSL_BIN% req -batch -x509 -newkey rsa:2048 -sha256 -nodes -subj %subjectArgs% -days 18250 -out "%pemFile%" -outform PEM -keyout "%keyPemFile%" || goto occuredError
 %XVHM_OPENSSL_BIN% x509 -outform der -in "%pemFile%" -out "%crtFile%" || goto occuredError
 %XVHM_OPENSSL_BIN% rsa -in "%keyPemFile%" -out "%keyFile%" || goto occuredError
-
-if not exist "%nameFile%" type nul > "%nameFile%"
-echo|set /p="%XVHM_OPENSSL_SUBJECT_CN%" > "%nameFile%"
 
 echo.
 echo ----------------------------------------
@@ -83,7 +67,6 @@ set pemFile=
 set keyPemFile=
 set crtFile=
 set keyFile=
-set nameFile=
 del /Q "%XVHM_TMP_DIR%\."
 
 echo.

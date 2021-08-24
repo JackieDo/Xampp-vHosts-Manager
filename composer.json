@@ -17,6 +17,15 @@
     "require": {
         "php": ">=5.4"
     },
+    "autoload": {
+        "files": [
+            "src/pre_defined.php",
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "VhostsManager\\": "src/"
+        }
+    },
     "scripts": {
         "post-create-project-cmd": [
             "xvhost.bat install"

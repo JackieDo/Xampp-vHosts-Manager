@@ -32,30 +32,37 @@ Vì thế, dự án này đã ra đời, nhằm tăng cường sức mạnh cho 
 # Tổng quan
 Hãy tìm đọc một trong những chủ đề sau để tìm hiểu thêm về Xampp vHosts Manager (XVHM).
 
-* [Sự tương thích](#sự-tương-thích)
-* [Yêu cầu](#yêu-cầu)
-* [Cài đặt](#cài-đặt)
-    - [Thông qua Composer Create-Project](#thông-qua-composer-create-project)
-    - [Dùng phương thức tải về thủ công](#dùng-phương-thức-tải-về-thủ-công)
-* [Sử dụng](#sử-dụng)
-    - [Hiển thị trợ giúp](#hiển-thị-trợ-giúp)
-    - [Tạo tên miền ảo mới](#tạo-tên-miền-ảo-mới)
-    - [Hiển thị thông tin của một tên miền ảo hiện có](#hiển-thị-thông-tin-của-một-tên-miền-ảo-hiện-có)
-    - [Liệt kê tất cả các tên miền ảo hiện đang có](#liệt-kê-tất-cả-các-tên-miền-ảo-hiện-đang-có)
-    - [Xóa bỏ một tên miền ảo](#xóa-bỏ-một-tên-miền-ảo)
-    - [Thêm chứng chỉ SSL cho một tên miền ảo](#thêm-chứng-chỉ-ssl-cho-một-tên-miền-ảo)
-    - [Gỡ bỏ chứng chỉ SSL của một tên miền ảo](#gỡ-bỏ-chứng-chỉ-ssl-của-một-tên-miền-ảo)
-    - [Thay đổi Document Root của một tên miền ảo](#thay-đổi-document-root-của-một-tên-miền-ảo)
-    - [Dừng Apache Httpd](#dừng-apache-httpd)
-    - [Chạy Apache Httpd](#chạy-apache-httpd)
-    - [Khởi động lại Apache Httpd](#khởi-động-lại-apache-httpd)
-    - [Đăng ký đường dẫn của ứng dụng](#đăng-ký-đường-dẫn-của-ứng-dụng)
-* [Cấu hình](#cấu-hình)
-* [Giấy phép](#giấy-phép)
-* [Lời cảm ơn](#lời-cảm-ơn)
+- [Xampp vHosts Manager](#xampp-vhosts-manager)
+- [Những tính năng của ứng dụng](#những-tính-năng-của-ứng-dụng)
+- [Tổng quan](#tổng-quan)
+  - [Sự tương thích](#sự-tương-thích)
+  - [Yêu cầu](#yêu-cầu)
+  - [Cài đặt](#cài-đặt)
+      - [Thông qua Composer Create-Project](#thông-qua-composer-create-project)
+      - [Dùng phương thức tải về thủ công](#dùng-phương-thức-tải-về-thủ-công)
+  - [Cập nhật](#cập-nhật)
+  - [Sử dụng](#sử-dụng)
+      - [Hiển thị trợ giúp](#hiển-thị-trợ-giúp)
+      - [Tạo tên miền ảo mới](#tạo-tên-miền-ảo-mới)
+      - [Hiển thị thông tin của một tên miền ảo hiện có](#hiển-thị-thông-tin-của-một-tên-miền-ảo-hiện-có)
+      - [Liệt kê tất cả các tên miền ảo hiện đang có](#liệt-kê-tất-cả-các-tên-miền-ảo-hiện-đang-có)
+      - [Xóa bỏ một tên miền ảo](#xóa-bỏ-một-tên-miền-ảo)
+      - [Thêm chứng chỉ SSL cho một tên miền ảo](#thêm-chứng-chỉ-ssl-cho-một-tên-miền-ảo)
+      - [Gỡ bỏ chứng chỉ SSL của một tên miền ảo](#gỡ-bỏ-chứng-chỉ-ssl-của-một-tên-miền-ảo)
+      - [Thay đổi Document Root của một tên miền ảo](#thay-đổi-document-root-của-một-tên-miền-ảo)
+      - [Dừng Apache Httpd](#dừng-apache-httpd)
+      - [Chạy Apache Httpd](#chạy-apache-httpd)
+      - [Khởi động lại Apache Httpd](#khởi-động-lại-apache-httpd)
+      - [Đăng ký đường dẫn của ứng dụng](#đăng-ký-đường-dẫn-của-ứng-dụng)
+      - [Cấp các quyền cần thiết cho tập tin Windows hosts](#cấp-các-quyền-cần-thiết-cho-tập-tin-windows-hosts)
+  - [Cấu hình](#cấu-hình)
+  - [Giấy phép](#giấy-phép)
+  - [Lời cảm ơn](#lời-cảm-ơn)
 
 ## Sự tương thích
-XVHM tương thích với tất cả các phiên bản Xampp sử dụng PHP 5.4 trở lên.
+
+* XVHM tương thích với tất cả các phiên bản Xampp sử dụng PHP 5.4 trở lên.
+* Hiện tại dự án này chưa hổ trợ các phiên bản Xampp Portable.
 
 ## Yêu cầu
 XVHM tận dụng tối đa những gì có trong Xampp, không cần thêm gì nữa. Vì vậy, bạn chỉ cần những điều sau đây:
@@ -78,7 +85,7 @@ $ composer create-project jackiedo/xampp-vhosts-manager xvhm "1.*"
 ```
 
 #### Dùng phương thức tải về thủ công
-* Tải về [phiên bản mới nhất](https://github.com/JackieDo/Xampp-vHosts-Manager/releases/latest)
+* Tải về [phiên bản phát hành mới nhất](https://github.com/JackieDo/Xampp-vHosts-Manager/releases/latest)
 * Giải nén bản cài đặt vào một nơi nào đó `(ví dụ: D:\xvhm)`. Lưu ý: Không nên đặt trong `C:\Program Files` hoặc bất cứ nơi nào đỏi hỏi quyền Administrator khi ta chỉnh sửa tập tin cấu hình về sau.
 * Mở dấu nhắc lệnh trong chế độ Administrator `(run as Administrator)`.
 * Điều hướng đến thư mục XVHM bạn đã giải nén `(ví dụ: cd /D D:\xvhm)`.
@@ -86,6 +93,14 @@ $ composer create-project jackiedo/xampp-vhosts-manager xvhm "1.*"
 * Đóng dấu nhắc lệnh (mục đích để xóa các biến tạm).
 
 > Lưu ý: Xem [tại đây](https://www.howtogeek.com/194041/how-to-open-the-command-prompt-as-administrator-in-windows-8.1/) để biết cách mở dấu nhắc lệnh với quyền Administrator.
+
+## Cập nhật
+Hiện tại, XVHM chưa có cơ chế cập nhật tự động, chúng ta phải thực hiện thủ công từng bước như sau:
+
+* Sao lưu tệp `settings.ini` và thư mục `cacert` trong thư mục XVHM của bạn sang một nơi khác.
+* Xóa bỏ tất cả các tệp và thư mục con bên trong thư mục ứng dụng Xampp vHosts Manager.
+* Tải về [phiên bản phát hành mới nhất](https://github.com/JackieDo/Xampp-vHosts-Manager/releases/latest) và giải nén nó vào thư mục ứng dụng XVHM.
+* Sao chép tập tin `settings.ini` và thư mục `cacert` đã sao lưu trước đó vào thư mục ứng dụng XVHM trở lại.
 
 ## Sử dụng
 Do đường dẫn đến thư mục ứng dụng XVHM đã được thêm vào biến môi trường đường dẫn trong quá trình cài đặt, bây giờ bạn chỉ cần mở dấu nhắc lệnh `(không cần thiết mở với quyền Administrator nữa)` ở bất cứ nơi đâu và thực hiện một trong các lệnh `xvhost` sau:
@@ -211,6 +226,16 @@ $ xvhost register_path
 
 > Lưu ý: Bạn cần cho phép quy trình này được thực thi với quyền Administrator.
 
+#### Cấp các quyền cần thiết cho tập tin Windows hosts
+Tính năng này sẽ cấp quyền `Modify`, `Read & execute`, `Read`, `Write` đối với tập tin `Windows hosts` cho tài khoản `Users`. Điều này giúp XVHM có thể thêm tên miền vào tập tin `Windows hosts` mỗi khi bạn tạo miền ảo.
+
+Cú pháp:
+```
+$ xvhost grantperms_winhosts
+```
+
+> Lưu ý: Bạn cần cho phép quy trình này được thực thi với quyền Administrator.
+
 ## Cấu hình
 Tất cả cấu hình được đặt trong một tệp ini có tên `settings.ini` nằm trong thư mục ứng dụng của XVHM. Cấu trúc của tập tin này trông như sau:
 
@@ -241,7 +266,7 @@ AdminEmail = "anhvudo@gmail.com"
 
 [ListViewMode]
 ;Số lượng tên miền ảo sẽ được hiển thị trên mỗi trang khi liệt kê các tên miền ảo hiện có.
-RecordPerPage = "2"
+RecordPerPage = "3"
 
 ```
 
