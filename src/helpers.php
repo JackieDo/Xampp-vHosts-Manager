@@ -12,15 +12,7 @@ if (! function_exists('file_lines')) {
      *                          attached. Upon failure, file_lines() returns false.
      */
     function file_lines($filename, $flags = 0) {
-        $autoDetectEndings = ini_get('auto_detect_line_endings');
-
-        ini_set('auto_detect_line_endings', '1');
-
-        $lines = file($filename, $flags);
-
-        ini_set('auto_detect_line_endings', $autoDetectEndings);
-
-        return $lines;
+        return file($filename, $flags);
     }
 }
 
